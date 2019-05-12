@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/layout_game"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	tools:context="com.wowloltech.politicalsandbox.GameActivity"
+	>
+
+	<RelativeLayout
+		android:id="@+id/map"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
+
+	</RelativeLayout>
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		android:background="#66eeeeee"
+		>
+
+
+		<HorizontalScrollView
+			android:id="@+id/scroll_panel"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
+
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal"
+
+				>
+
+				<Button
+					android:id="@+id/btn_nextTurn"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:padding="20dp"
+					android:text="@string/next_turn"/>
+
+				<TextView
+					android:id="@+id/text_player"
+					android:layout_width="wrap_content"
+					android:textColor="#000"
+					android:layout_height="wrap_content"
+					android:layout_margin="5dp"/>
+
+				<TextView
+					android:id="@+id/text_money"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:textColor="#000"
+					android:layout_margin="5dp"/>
+
+				<TextView
+					android:id="@+id/text_recruits"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:textColor="#000"
+					android:layout_margin="5dp"/>
+
+				<TextView
+					android:id="@+id/text_turn"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:textColor="#000"
+					android:layout_margin="5dp"
+					/>
+
+			</LinearLayout>
+		</HorizontalScrollView>
+
+	</LinearLayout>
+
+</FrameLayout>
