@@ -117,10 +117,10 @@ public class Game {
             } catch (Exception e) {
                 Log.d("myLog", "not fund");
             }
-            myDbHelper = new DatabaseHelper(activity.getApplicationContext(), "testmap.db");
+            myDbHelper = new DatabaseHelper(activity.getApplicationContext(), "testmap.db", "testsave.db");
             activity.getSharedPreferences("save", Context.MODE_PRIVATE).edit().putString("selected_database", "testsave.db").apply();
         } else
-            myDbHelper = new DatabaseHelper(activity.getApplicationContext(),"testmap.db");
+            myDbHelper = new DatabaseHelper(activity.getApplicationContext(),"testmap.db", "testsave.db");
         Log.d("myLog", dbName);
         Tools.dbHelper = myDbHelper;
         myDbHelper.readDatabase(this);
