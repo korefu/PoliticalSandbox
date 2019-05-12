@@ -15,6 +15,7 @@ import java.io.OutputStream;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static String DB_NAME = "testmap.db";
+    private static String SAVE_NAME = "testsave.db";
     private static String DB_PATH = "";
     private static final int DB_VERSION = 1;
     private static final String LOG_TAG = "polsandbox";
@@ -27,9 +28,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return mDataBase;
     }
 
-    public DatabaseHelper(Context context, String DB_NAME) {
-        super(context, DB_NAME, null, DB_VERSION);
+    public DatabaseHelper(Context context, String DB_NAME, String mapName) {
+        super(context, mapName, null, DB_VERSION);
         DatabaseHelper.DB_NAME = DB_NAME;
+        SAVE_NAME = mapName;
         DB_PATH = context.getApplicationInfo().dataDir + "/databases/";
         this.mContext = context;
 
@@ -40,7 +42,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void updateDataBase() throws IOException {
         if (mNeedUpdate) {
-            File dbFile = new File(DB_PATH + DB_NAME);
+            File dbFile = new File(DB_PATH + SAVE_NAME);
             if (dbFile.exists())
                 dbFile.delete();
 
@@ -51,7 +53,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     private boolean checkDataBase() {
-        File dbFile = new File(DB_PATH + DB_NAME);
+        File dbFile = new File(DB_PATH + SAVE_NAME);
         return dbFile.exists();
     }
 
@@ -70,7 +72,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private void copyDBFile() throws IOException {
         InputStream mInput = mContext.getAssets().open(DB_NAME);
         //InputStream mInput = mContext.getResources().openRawResource(R.raw.info);
-        OutputStream mOutput = new FileOutputStream(DB_PATH + DB_NAME);
+        OutputStream mOutput = new FileOutputStream(DB_PATH + SAVE_NAME);
         byte[] mBuffer = new byte[1024];
         int mLength;
         while ((mLength = mInput.read(mBuffer)) > 0)
@@ -81,7 +83,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public boolean openDataBase() throws SQLException {
-        mDataBase = SQLiteDatabase.openDatabase(DB_PATH + DB_NAME, null, SQLiteDatabase.CREATE_IF_NECESSARY);
+        mDataBase = SQLiteDatabase.openDatabase(DB_PATH + SAVE_NAME, null, SQLiteDatabase.CREATE_IF_NECESSARY);
         return mDataBase != null;
     }
 
