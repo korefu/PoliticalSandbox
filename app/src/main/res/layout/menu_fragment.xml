@@ -22,22 +22,6 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/save_game"
-            android:id="@+id/button_save"
-            android:layout_marginLeft="100dp"
-            android:layout_marginRight="100dp"/>
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/load_game"
-            android:id="@+id/button_load"
-            android:layout_marginLeft="100dp"
-            android:layout_marginRight="100dp"/>
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:text="@string/exit"
             android:id="@+id/button_exit"
             android:layout_marginLeft="100dp"

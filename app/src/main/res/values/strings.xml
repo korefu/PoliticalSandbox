@@ -108,4 +108,6 @@
     <string name="load_game">Загрузить игру</string>
     <string name="save_game">Сохранить игру</string>
     <string name="resume_to_game">Вернуться к игре</string>
+    <string name="name_of_new_save">Name of new save</string>
+    <string name="delete">Удалить</string>
 </resources>

@@ -65,38 +65,8 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentLeft="true"
         android:id="@+id/selected_database"
-        android:text="testmap.db"
+        android:text="New save"
         android:layout_margin="5dp"/>
 
-    <ToggleButton
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:layout_below="@id/selected_database"
-        android:id="@+id/enabled_editor_button"/>
-
-    <EditText
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:ems="10"
-        android:layout_below="@id/enabled_editor_button"/>
-
-    <EditText
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:layout_width="wrap_content"
-        android:ems="10"
-        android:layout_below="@id/enabled_editor_button"
-        android:id="@+id/map_width_edit"
-        android:text="10"/>
-
-    <EditText
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:layout_width="wrap_content"
-        android:ems="10"
-        android:layout_below="@id/map_width_edit"
-        android:id="@+id/map_height_edit"
-        android:text="10"/>
 
 </RelativeLayout>
-

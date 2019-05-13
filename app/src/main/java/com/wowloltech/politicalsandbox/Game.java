@@ -108,19 +108,18 @@ public class Game {
         }
     }
 
-    public void startGame(String dbName) {
+    public void startGame(String dbName, String saveName) {
         Log.d("myLog", "startGame");
-        if ("testmap.db".equals(dbName)) {
+        if (saveName.equals(dbName)) {
             try {
-                activity.deleteDatabase("testsave.db");
+                activity.deleteDatabase(saveName);
                 Log.d("myLog", "deleted");
             } catch (Exception e) {
                 Log.d("myLog", "not fund");
             }
-            myDbHelper = new DatabaseHelper(activity.getApplicationContext(), "testmap.db", "testsave.db");
-            activity.getSharedPreferences("save", Context.MODE_PRIVATE).edit().putString("selected_database", "testsave.db").apply();
+            myDbHelper = new DatabaseHelper(activity.getApplicationContext(), dbName, saveName);
         } else
-            myDbHelper = new DatabaseHelper(activity.getApplicationContext(),"testmap.db", "testsave.db");
+            myDbHelper = new DatabaseHelper(activity.getApplicationContext(), dbName, saveName);
         Log.d("myLog", dbName);
         Tools.dbHelper = myDbHelper;
         myDbHelper.readDatabase(this);

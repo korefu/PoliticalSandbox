@@ -14,8 +14,6 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.menu_fragment, null);
         v.findViewById(R.id.button_resume).setOnClickListener(this);
-        v.findViewById(R.id.button_save).setOnClickListener(this);
-        v.findViewById(R.id.button_load).setOnClickListener(this);
         v.findViewById(R.id.button_exit).setOnClickListener(this);
         return v;
     }
@@ -27,7 +25,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
                 getActivity().onBackPressed();
                 break;
             case R.id.button_exit:
-                getActivity().getSharedPreferences("save", Activity.MODE_PRIVATE).edit().putString("selected_database", Tools.dbHelper.getDatabaseName()).apply();
+                getActivity().getSharedPreferences("save", Activity.MODE_PRIVATE).edit().putString("save_database", Tools.dbHelper.getDatabaseName()).apply();
                 getActivity().finish();
         }
 

@@ -55,7 +55,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
         sPref = getSharedPreferences("save", MODE_PRIVATE);
         setContentView(R.layout.activity_game);
         game = new Game(this);
-        game.startGame(sPref.getString("selected_database", "testmap.db"));
+        game.startGame(sPref.getString("map_database", "testmap.db"), sPref.getString("save_database", "testsave.db"));
         setViews(savedInstanceState);
         gameView = new GameView(this, game);
         map.addView(gameView);
