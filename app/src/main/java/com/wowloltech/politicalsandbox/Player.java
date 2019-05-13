@@ -54,7 +54,7 @@ public abstract class Player {
         cv.put("location", a.getLocation().getId());
         cv.put("speed", a.getSpeed());
         cv.put("owner", a.getOwner().getId());
-        cv.put("id", a.getId());
+        cv.put("_id", a.getId());
         Tools.dbHelper.getDb().insert("armies", null, cv);
     }
 
@@ -99,7 +99,8 @@ public abstract class Player {
         this.money = money;
         ContentValues cv = new ContentValues();
         cv.put("money", money);
-        Tools.dbHelper.getDb().update("players", cv, "_id = ?", new String[]{String.valueOf(getId())});
+        Tools.dbHelper.getDb().update("players", cv, "_id = ?", new String[]{String.valueOf(getId()+1)});
+        Log.d("myLog", String.valueOf(money) + " setmoney");
     }
 
     public int getRecruits() {
@@ -110,7 +111,7 @@ public abstract class Player {
         this.recruits = recruits;
         ContentValues cv = new ContentValues();
         cv.put("recruits", recruits);
-        Tools.dbHelper.getDb().update("players", cv, "_id = ?", new String[]{String.valueOf(getId())});
+        Tools.dbHelper.getDb().update("players", cv, "_id = ?", new String[]{String.valueOf(getId()+1)});
     }
 
     public void setIsHuman(boolean isHuman) {
@@ -118,10 +119,10 @@ public abstract class Player {
         ContentValues cv = new ContentValues();
         if (isHuman) {
             cv.put("is_human", 1);
-            Tools.dbHelper.getDb().update("players", cv, "_id = ?", new String[]{String.valueOf(getId())});
+            Tools.dbHelper.getDb().update("players", cv, "_id = ?", new String[]{String.valueOf(getId()+1)});
         } else {
             cv.put("is_human", 0);
-            Tools.dbHelper.getDb().update("players", cv, "_id = ?", new String[]{String.valueOf(getId())});
+            Tools.dbHelper.getDb().update("players", cv, "_id = ?", new String[]{String.valueOf(getId()+1)});
         }
     }
 

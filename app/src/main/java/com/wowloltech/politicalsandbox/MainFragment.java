@@ -47,7 +47,10 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 case R.id.btn_continue:
                     if (getActivity().getSharedPreferences("save", MODE_PRIVATE).getString("save_database", "null").equals("null"))
                         Toast.makeText(getActivity(), "Последней сохраненной игры не существует", Toast.LENGTH_SHORT).show();
-                    else startActivity(new Intent(getActivity().getApplicationContext(), GameActivity.class));
+                    else {
+                        MainActivity.rewrite = false;
+                        startActivity(new Intent(getActivity().getApplicationContext(), GameActivity.class));
+                    }
                     break;
                 case R.id.btn_load_game:
                     getFragmentManager().beginTransaction()

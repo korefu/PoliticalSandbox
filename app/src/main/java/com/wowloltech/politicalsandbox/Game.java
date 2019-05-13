@@ -110,7 +110,7 @@ public class Game {
 
     public void startGame(String dbName, String saveName) {
         Log.d("myLog", "startGame");
-        if (saveName.equals(dbName)) {
+        if (MainActivity.rewrite) {
             try {
                 activity.deleteDatabase(saveName);
                 Log.d("myLog", "deleted");
@@ -132,21 +132,8 @@ public class Game {
         return null;
     }
 
-    public Player addPlayer(int id, double money, int recruits, int isHuman) {
-        ContentValues cv = new ContentValues();
-        cv.put("money", money);
-        cv.put("recruits", recruits);
-        cv.put("is_human", isHuman);
-        cv.put("id", id);
-        Tools.dbHelper.getDb().insert("players", null, cv);
-        if (isHuman == 1)
-            return new HumanPlayer(id, money, recruits);
-        else
-            return new AIPlayer(id, money, recruits);
-    }
-
     public void removePlayer(int playerId) {
-        Tools.dbHelper.getDb().delete("players", "id = ?", new String[]{String.valueOf(playerId)});
+        Tools.dbHelper.getDb().delete("players", "id = ?", new String[]{String.valueOf(playerId+1)});
         for (int i = 0; i < players.size(); i++)
             if (players.get(i).getId() == playerId) {
                 players.remove(i);

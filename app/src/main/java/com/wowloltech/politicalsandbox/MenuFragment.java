@@ -26,6 +26,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.button_exit:
                 getActivity().getSharedPreferences("save", Activity.MODE_PRIVATE).edit().putString("save_database", Tools.dbHelper.getDatabaseName()).apply();
+                Tools.dbHelper.getDb().close();
                 getActivity().finish();
         }
 

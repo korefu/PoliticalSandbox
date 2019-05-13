@@ -69,6 +69,7 @@ public class NewGameFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_start:
+                MainActivity.rewrite = true;
                 getActivity().getSharedPreferences("save", Activity.MODE_PRIVATE).edit().putString("save_database", editText.getText().toString() + ".db").commit();
                 startActivity(new Intent(getActivity().getApplicationContext(), GameActivity.class));
                 isStarting = false;

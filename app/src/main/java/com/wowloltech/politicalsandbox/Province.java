@@ -64,22 +64,8 @@ public class Province {
         return income;
     }
 
-    public void setIncome(double income) {
-        this.income = income;
-        ContentValues cv = new ContentValues();
-        cv.put("income", income);
-        Tools.dbHelper.getDb().update("map", cv, "_id = ?", new String[]{String.valueOf(getId() + 1)});
-    }
-
     public int getRecruits() {
         return recruits;
-    }
-
-    public void setRecruits(int recruits) {
-        this.recruits = recruits;
-        ContentValues cv = new ContentValues();
-        cv.put("recruits", recruits);
-        Tools.dbHelper.getDb().update("map", cv, "_id = ?", new String[]{String.valueOf(getId() + 1)});
     }
 
     public Player getOwner() {

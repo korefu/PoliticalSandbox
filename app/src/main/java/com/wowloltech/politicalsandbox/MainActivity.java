@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 
 public class MainActivity extends Activity {
+    public static boolean rewrite = false;
 
     public MainFragment mainFragment;
 

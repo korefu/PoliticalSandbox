@@ -48,7 +48,7 @@ public class Army {
 
     public void setId(int id) {
         ContentValues cv = new ContentValues();
-        cv.put("id", id);
+        cv.put("_id", id);
         Tools.dbHelper.getDb().update("armies", cv, "_id = ?", new String[]{String.valueOf(id)});
         this.id = id;
 
