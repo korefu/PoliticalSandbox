@@ -36,7 +36,8 @@ public class LoadGameFragment extends Fragment implements View.OnClickListener {
                 iterator = saves.listIterator();
         while (iterator.hasNext()) {
             String map = iterator.next();
-            if (!map.substring(map.length() - 3).equals(".db")) iterator.remove();
+            if (map.length() <= 3) { iterator.remove(); continue; }
+            if (!map.substring(map.length() - 3).equals(".db")) { iterator.remove(); continue; }
             else iterator.set(map.substring(0, map.length() - 3));
         }
         Log.d("myLog", saves.toString());

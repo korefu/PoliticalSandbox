@@ -42,7 +42,8 @@ public class NewGameFragment extends Fragment implements View.OnClickListener {
                 iterator = maps.listIterator();
         while (iterator.hasNext()) {
             String map = iterator.next();
-            if (!map.substring(map.length() - 6).equals("map.db")) iterator.remove();
+            if (map.length() <= 6) { iterator.remove(); continue; }
+            if (!map.substring(map.length() - 6).equals("map.db")) { iterator.remove(); continue; }
             else iterator.set(map.substring(0, map.length() - 6));
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, maps);
