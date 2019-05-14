@@ -68,5 +68,15 @@
         android:text="New save"
         android:layout_margin="5dp"/>
 
+    <EditText
+        android:id="@+id/new_game_player_id"
+        android:layout_margin="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:layout_below="@id/selected_database"
+        android:inputType="textPersonName"
+        android:text="0" />
+
 
 </RelativeLayout>

@@ -10,15 +10,17 @@ import java.util.List;
 
 public class Game {
     private final String LOG_TAG = "myLog";
-    private HumanPlayer currentPlayer;
+    private Player currentPlayer;
     private GameActivity activity;
     private int turnCounter = 0;
     private List<Player> players;
     private DatabaseHelper myDbHelper;
+    private int humanPlayerId;
 
     public Game(GameActivity activity) {
         this.activity = activity;
         this.players = new LinkedList<>();
+        humanPlayerId = getActivity().getSharedPreferences("save", Context.MODE_PRIVATE).getInt("player_id", 0);
         Tools.game = this;
     }
 
@@ -26,12 +28,12 @@ public class Game {
         return activity;
     }
 
-    public void setCurrentPlayerFromDb(HumanPlayer get) {
-        this.currentPlayer = get;
-    }
+//    public void setCurrentPlayerFromDb(HumanPlayer get) {
+//        this.currentPlayer = get;
+//    }
 
     public Player addPlayerFromDb(int id, double money, int recruits, int isHuman) {
-        if (isHuman == 1)
+        if (id == humanPlayerId)
             return new HumanPlayer(id, money, recruits);
         else
             return new AIPlayer(id, money, recruits);
@@ -45,7 +47,7 @@ public class Game {
         Tools.setIdCounter(idCounter);
     }
 
-    public HumanPlayer getCurrentPlayer() {
+    public Player getCurrentPlayer() {
         return currentPlayer;
     }
 
@@ -122,6 +124,7 @@ public class Game {
         Log.d("myLog", dbName);
         Tools.dbHelper = myDbHelper;
         myDbHelper.readDatabase(this);
+        currentPlayer = findPlayerByID(humanPlayerId);
     }
 
     public Player findPlayerByID(int id) {

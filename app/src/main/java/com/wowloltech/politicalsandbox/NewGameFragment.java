@@ -21,6 +21,7 @@ import java.util.ListIterator;
 
 public class NewGameFragment extends Fragment implements View.OnClickListener {
     EditText editText;
+    EditText playerId;
     Spinner spinner;
     ArrayList<String> maps;
     private boolean isStarting = true;
@@ -30,6 +31,7 @@ public class NewGameFragment extends Fragment implements View.OnClickListener {
         View v = inflater.inflate(R.layout.new_game_fragment, null);
         v.findViewById(R.id.btn_start).setOnClickListener(this);
         editText = v.findViewById(R.id.selected_database);
+        playerId = v.findViewById(R.id.new_game_player_id);
         v.findViewById(R.id.btn_cancel).setOnClickListener(this);
         spinner = v.findViewById(R.id.spinner);
         try {
@@ -71,6 +73,7 @@ public class NewGameFragment extends Fragment implements View.OnClickListener {
             case R.id.btn_start:
                 MainActivity.rewrite = true;
                 getActivity().getSharedPreferences("save", Activity.MODE_PRIVATE).edit().putString("save_database", editText.getText().toString() + ".db").commit();
+                getActivity().getSharedPreferences("save", Activity.MODE_PRIVATE).edit().putInt("player_id", Integer.valueOf(playerId.getText().toString())).commit();
                 startActivity(new Intent(getActivity().getApplicationContext(), GameActivity.class));
                 isStarting = false;
                 break;

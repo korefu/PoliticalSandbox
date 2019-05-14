@@ -147,7 +147,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 game.getPlayers().add(game.addPlayerFromDb(id, money, recruits, isHuman));
             } while (c.moveToNext());
         }
-        game.setCurrentPlayerFromDb((HumanPlayer) game.findPlayerByID(currentPlayerId));
+//        game.setCurrentPlayerFromDb((HumanPlayer) game.findPlayerByID(currentPlayerId));
         c.close();
         Log.d(LOG_TAG, game.getPlayers().toString());
         c = mDataBase.query("map", null, null, null, null, null, null);
