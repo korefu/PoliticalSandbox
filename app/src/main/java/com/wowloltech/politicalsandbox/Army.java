@@ -35,7 +35,6 @@ public class Army {
     public static void remove(Army army, Iterator i) {
         Tools.dbHelper.getDb().delete("armies", "_id = ?", new String[]{String.valueOf(army.getId())});
         i.remove();
-        army.getLocation().getArmies().remove(army);
     }
 
     public int getId() {
@@ -75,13 +74,6 @@ public class Army {
 
     public Player getOwner() {
         return owner;
-    }
-
-    public void setOwner(Player owner) {
-        this.owner = owner;
-        ContentValues cv = new ContentValues();
-        cv.put("owner", owner.getId());
-        Tools.dbHelper.getDb().update("armies", cv, "_id = ?", new String[]{String.valueOf(id)});
     }
 
     @Override

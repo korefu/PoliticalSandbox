@@ -19,6 +19,11 @@ public class Game {
     public Game(GameActivity activity) {
         this.activity = activity;
         this.players = new LinkedList<>();
+        Tools.game = this;
+    }
+
+    public GameActivity getActivity() {
+        return activity;
     }
 
     public void setCurrentPlayerFromDb(HumanPlayer get) {
@@ -66,7 +71,7 @@ public class Game {
         return players;
     }
 
-    public HumanPlayer nextTurn() {
+    public Player nextTurn() {
         int i = 0;
         for (int k = 0; k < players.size(); k++)
             if (players.get(k).getId() == currentPlayer.getId())
@@ -89,9 +94,15 @@ public class Game {
                 }
                 if (players.get(i).isHuman()) {
                     players.get(i).nextTurn();
-                    return (HumanPlayer) players.get(i);
+                    return players.get(i);
                 }
                 players.get(i).nextTurn();
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        activity.updateScreen();
+                    }
+                });
             }
         }
     }
@@ -121,7 +132,7 @@ public class Game {
     }
 
     public void removePlayer(int playerId) {
-        Tools.dbHelper.getDb().delete("players", "id = ?", new String[]{String.valueOf(playerId+1)});
+        Tools.dbHelper.getDb().delete("players", "_id = ?", new String[]{String.valueOf(playerId+1)});
         for (int i = 0; i < players.size(); i++)
             if (players.get(i).getId() == playerId) {
                 players.remove(i);

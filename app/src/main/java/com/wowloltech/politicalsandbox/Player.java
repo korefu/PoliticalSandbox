@@ -49,6 +49,7 @@ public abstract class Player {
 
     public void addArmy(Army a) {
         armies.add(a);
+        a.getLocation().getArmies().add(a);
         ContentValues cv = new ContentValues();
         cv.put("strength", a.getStrength());
         cv.put("location", a.getLocation().getId());
@@ -56,6 +57,12 @@ public abstract class Player {
         cv.put("owner", a.getOwner().getId());
         cv.put("_id", a.getId());
         Tools.dbHelper.getDb().insert("armies", null, cv);
+        Tools.game.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Tools.game.getActivity().updateScreen();
+            }
+        });
     }
 
 
@@ -171,7 +178,8 @@ public abstract class Player {
     abstract boolean acceptPeace(Event e);
 
     public void pickMilitary(int strength, Province province) {
-        addArmy(new Army(strength, province, this, Tools.getIdCounter()));
+        Army army = new Army(strength, province, this, Tools.getIdCounter());
+        addArmy(army);
         Tools.setIdCounter(Tools.getIdCounter()+1);
         setRecruits(getRecruits() - strength);
         setMoney(getMoney() - (double) strength / 50);
@@ -180,11 +188,13 @@ public abstract class Player {
     public void combineArmy(Province selectedProvince) {
         int summaryArmy = 0;
         int summarySpeed = 10;
+        Log.d("myLog", selectedProvince.getArmies().toString());
         for (Iterator<Army> i = selectedProvince.getArmies().iterator(); i.hasNext(); ) {
             Army cArmy = i.next();
                 summaryArmy += cArmy.getStrength();
                 if (summarySpeed > cArmy.getSpeed())
                     summarySpeed = cArmy.getSpeed();
+                cArmy.getOwner().armies.remove(cArmy);
                 Army.remove(cArmy, i);
         }
         Log.d("myLog", "" + summaryArmy);
@@ -199,7 +209,8 @@ public abstract class Player {
         Iterator<Army> i = province.getOwner().getArmies().iterator();
         while (i.hasNext()) {
             Army a = i.next();
-            Log.d("myLog", "" + army.getLocation());
+//            Log.d("myLog", "" + army.getLocation().getX() + " " + army.getLocation().getY() + " " + army.getOwner() + " "
+//            + army.getStrength() + "\n" + province.getX() + " " + province.getY());
             if (a.getLocation() == province && province.getOwner() != army.getOwner()) {
                 if (a.getStrength() > army.getStrength()) {
                     a.setStrength(a.getStrength() - army.getStrength());
@@ -208,17 +219,26 @@ public abstract class Player {
                 } else if (a.getStrength() == army.getStrength()) {
                     Army.remove(army);
                     Army.remove(a, i);
+                    a.getOwner().armies.remove(a);
                     return;
                 } else {
                     army.setStrength(army.getStrength() - a.getStrength());
                     Army.remove(a, i);
+                    a.getOwner().armies.remove(a);
                 }
             }
         }
+        army.setSpeed(army.getSpeed()-1);
         army.setLocation(province);
         province.getOwner().getProvinces().remove(province);
         province.setOwner(army.getOwner());
         army.getOwner().getProvinces().add(province);
+        Tools.game.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Tools.game.getActivity().updateScreen();
+            }
+        });
     }
 
     public void nextTurn() {
@@ -236,7 +256,9 @@ public abstract class Player {
             setMoney(0);
             for (Iterator<Army> i = getArmies().iterator(); i.hasNext(); ) {
                 Army a = i.next();
-                Army.remove(a);
+                a.getOwner().armies.remove(a);
+                a.getLocation().getArmies().remove(a);
+                Army.remove(a, i);
             }
         }
     };

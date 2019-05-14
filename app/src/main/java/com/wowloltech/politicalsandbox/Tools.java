@@ -13,6 +13,7 @@ public class Tools {
     public static DatabaseHelper dbHelper;
     public static MainFragment mainFragment;
     private static int idCounter;
+    public static Game game;
 
     public static int generateViewId() {
         for (; ; ) {
