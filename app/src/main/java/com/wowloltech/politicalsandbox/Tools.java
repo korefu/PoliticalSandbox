@@ -1,5 +1,6 @@
 package com.wowloltech.politicalsandbox;
 
+import android.content.ContentValues;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -11,6 +12,7 @@ public class Tools {
     public static boolean isSaved = true;
     public static DatabaseHelper dbHelper;
     public static MainFragment mainFragment;
+    private static int idCounter;
 
     public static int generateViewId() {
         for (; ; ) {
@@ -47,5 +49,16 @@ public class Tools {
             list.add(null);
         }
         return list;
+    }
+
+    public static int getIdCounter() {
+        return idCounter;
+    }
+
+    public static void setIdCounter(int idC) {
+        idCounter = idC;
+        ContentValues cv = new ContentValues();
+        cv.put("id_counter", idCounter);
+        Tools.dbHelper.getDb().update("game", cv, null, null);
     }
 }

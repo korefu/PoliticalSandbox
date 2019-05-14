@@ -155,7 +155,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
                 provincePickMilitaryDialog.show(getFragmentManager(), "provincePickMilitaryDialog");
                 break;
             case MENU_COMBINE_ARMY:
-                game.getCurrentPlayer().combineArmy(game, gameView.getSelectedProvince());
+                game.getCurrentPlayer().combineArmy(gameView.getSelectedProvince());
                 updateScreen();
                 break;
             case MENU_DIVIDE_ARMY:

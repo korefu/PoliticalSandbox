@@ -12,7 +12,6 @@ public class Game {
     private final String LOG_TAG = "myLog";
     private HumanPlayer currentPlayer;
     private GameActivity activity;
-    private int idCounter = 0;
     private int turnCounter = 0;
     private List<Player> players;
     private DatabaseHelper myDbHelper;
@@ -38,7 +37,7 @@ public class Game {
     }
 
     public void setIdCounterFromDb(int idCounter) {
-        this.idCounter = idCounter;
+        Tools.setIdCounter(idCounter);
     }
 
     public HumanPlayer getCurrentPlayer() {
@@ -49,17 +48,6 @@ public class Game {
         this.currentPlayer = currentPlayer;
         ContentValues cv = new ContentValues();
         cv.put("current_player", currentPlayer.getId());
-        Tools.dbHelper.getDb().update("game", cv, null, null);
-    }
-
-    public int getIdCounter() {
-        return idCounter;
-    }
-
-    public void setIdCounter(int idCounter) {
-        this.idCounter = idCounter;
-        ContentValues cv = new ContentValues();
-        cv.put("id_counter", idCounter);
         Tools.dbHelper.getDb().update("game", cv, null, null);
     }
 
@@ -141,32 +129,4 @@ public class Game {
             }
     }
 
-    public boolean attackProvince(Army army, Province province) {
-        for (Player p : players) {
-            Iterator<Army> i = p.getArmies().iterator();
-            while (i.hasNext()) {
-                Army a = i.next();
-                Log.d("myLog", "" + army.getLocation());
-                if (a.getLocation() == province && p.getId() != currentPlayer.getId()) {
-                    if (a.getStrength() > army.getStrength()) {
-                        a.setStrength(a.getStrength() - army.getStrength());
-                        Army.remove(army, this);
-                        return true;
-                    } else if (a.getStrength() == army.getStrength()) {
-                        Army.remove(army, this);
-                        Army.remove(a, i);
-                        return true;
-                    } else {
-                        army.setStrength(army.getStrength() - a.getStrength());
-                        Army.remove(a, i);
-                    }
-                }
-            }
-        }
-        army.setLocation(province);
-        province.getOwner().getProvinces().remove(province);
-        province.setOwner(currentPlayer);
-        currentPlayer.getProvinces().add(province);
-        return true;
-    }
 }

@@ -205,7 +205,7 @@ public class GameView extends View {
                 if (!isArmyMoving())
                     activity.openContextMenu(activity.map);
                 else if (selectedProvince.getSelected()) {
-                    game.attackProvince(movingArmy, selectedProvince);
+                    movingArmy.getOwner().attackProvince(movingArmy, selectedProvince);
                     activity.movingArmy(movingArmy);
                 } else {
                     movingArmy.setSpeed(2);

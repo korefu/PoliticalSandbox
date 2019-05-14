@@ -184,7 +184,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 localC = mDataBase.query("map", null, "_id = ?", new String[]{String.valueOf(locationId + 1)}, null, null, null);
                 localC.moveToFirst();
                 Province province = Map.findProvinceByID(localC.getInt(localC.getColumnIndex("_id")) - 1);
-                p.getArmies().add(new Army(strength, province, p, id, speed));
+                Army army = new Army(strength, province, p, id, speed);
+                p.getArmies().add(army);
+                province.getArmies().add(army);
             } while (c.moveToNext());
             localC.close();
         }

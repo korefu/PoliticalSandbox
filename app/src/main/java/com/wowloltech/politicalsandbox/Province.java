@@ -2,6 +2,10 @@ package com.wowloltech.politicalsandbox;
 
 import android.content.ContentValues;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
 public class Province {
     private double income;
     private int recruits;
@@ -10,6 +14,11 @@ public class Province {
     private int y;
     private Player owner;
     private boolean selected = false;
+    private List<Army> armies;
+
+    public List<Army> getArmies() {
+        return armies;
+    }
 
     public Province(int x, int y, int id, int recruits, double income, Player owner) {
         this.x = x;
@@ -18,16 +27,9 @@ public class Province {
         this.recruits = recruits;
         this.income = income;
         this.owner = owner;
+        armies = new LinkedList<>();
     }
 
-    public Province(int id, int x, int y, Game game) {
-        this.id = id;
-        this.x = x;
-        this.y = y;
-        this.owner = game.getPlayers().get(0);
-        this.income = 1.0;
-        this.recruits = 10000;
-    }
 
     public int getId() {
         return id;

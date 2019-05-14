@@ -26,20 +26,16 @@ public class Army {
         this.id = id;
     }
 
-    public static void remove(Army army, Game game) {
-        Iterator<Army> i = army.getOwner().getArmies().iterator();
-        while (i.hasNext()) {
-            Army cArmy = i.next();
-            if (army.getId() == cArmy.getId()) {
-                i.remove();
-                Tools.dbHelper.getDb().delete("armies", "_id = ?", new String[]{String.valueOf(army.getId())});
-            }
-        }
+    public static void remove(Army army) {
+        army.getOwner().getArmies().remove(army);
+        army.getLocation().getArmies().remove(army);
+        Tools.dbHelper.getDb().delete("armies", "_id = ?", new String[]{String.valueOf(army.getId())});
     }
 
     public static void remove(Army army, Iterator i) {
         Tools.dbHelper.getDb().delete("armies", "_id = ?", new String[]{String.valueOf(army.getId())});
         i.remove();
+        army.getLocation().getArmies().remove(army);
     }
 
     public int getId() {

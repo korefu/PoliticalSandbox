@@ -43,7 +43,7 @@ public class ProvincePickMilitaryDialog extends DialogFragment implements OnClic
         switch (v.getId()) {
             case R.id.btn_ok:
                 if (seekBar.getProgress() * activity.getGame().getCurrentPlayer().getRecruits() / 100 > 0) {
-                    activity.getGame().getCurrentPlayer().pickMilitary(activity.getGame(), selectedRecruits, activity.gameView.getSelectedProvince());
+                    activity.getGame().getCurrentPlayer().pickMilitary(selectedRecruits, activity.gameView.getSelectedProvince());
                 }
                 break;
             case R.id.btn_cancel:

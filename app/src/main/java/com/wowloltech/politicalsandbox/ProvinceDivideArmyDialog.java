@@ -54,7 +54,7 @@ public class ProvinceDivideArmyDialog extends DialogFragment implements OnClickL
         switch (v.getId()) {
             case R.id.btn_ok:
                 if (seekBar.getProgress() * activity.getGame().getCurrentPlayer().getRecruits() / 100 > 0) {
-                    activity.getGame().getCurrentPlayer().divideArmy(activity.getGame(), Integer.valueOf(divideLeft.getText().toString()), Integer.valueOf(divideRight.getText().toString()), army);
+                    activity.getGame().getCurrentPlayer().divideArmy(Integer.valueOf(divideLeft.getText().toString()), Integer.valueOf(divideRight.getText().toString()), army);
                 }
                 break;
             case R.id.btn_cancel:

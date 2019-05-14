@@ -25,23 +25,7 @@ public class HumanPlayer extends Player {
 
     @Override
     public void nextTurn() {
-        double income = 0;
-        int newRecruits = 0;
-        for (int i = 0; i < this.getProvinces().size(); i++) {
-            income += getProvinces().get(i).getIncome();
-            newRecruits += getProvinces().get(i).getRecruits();
-        }
-        for (Army a : getArmies())
-            income -= (double) a.getStrength() / 100;
-        setMoney(getMoney() + income);
-        setRecruits(getRecruits() + newRecruits);
-        if (getMoney() < 0) {
-            setMoney(0);
-            for (Iterator<Army> i = getArmies().iterator(); i.hasNext(); ) {
-                Army a = i.next();
-                Army.remove(a, i);
-            }
-        }
+       super.nextTurn();
     }
 
     @Override
