@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
@@ -177,7 +178,6 @@ public class GameActivity extends Activity implements View.OnClickListener {
             @Override
             protected Void doInBackground(Void... params) {
                 HumanPlayer humanPlayer = (HumanPlayer) game.nextTurn();
-                if (humanPlayer != null)
                 game.setCurrentPlayer(humanPlayer);
                 return null;
             }
@@ -192,13 +192,10 @@ public class GameActivity extends Activity implements View.OnClickListener {
                     }
                     updateScreen();
                 } else {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
                     Tools.dbHelper.getDb().close();
+                    Log.d("myLog", Tools.dbHelper.getDatabaseName());
                     deleteDatabase(Tools.dbHelper.getDatabaseName());
+                    GameActivity.this.finish();
                     finish();
                 }
             }

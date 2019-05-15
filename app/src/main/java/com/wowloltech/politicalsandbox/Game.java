@@ -33,7 +33,7 @@ public class Game {
     public Player addPlayerFromDb(int id, double money, int recruits, int isHuman) {
         if (isHuman==1) {
             HumanPlayer humanPlayer = new HumanPlayer(id, money, recruits);
-            currentPlayer = humanPlayer;
+            setCurrentPlayer(humanPlayer);
             return humanPlayer;
         }
         else
@@ -54,9 +54,11 @@ public class Game {
 
     public void setCurrentPlayer(HumanPlayer currentPlayer) {
         this.currentPlayer = currentPlayer;
-        ContentValues cv = new ContentValues();
-        cv.put("current_player", currentPlayer.getId());
-        Tools.dbHelper.getDb().update("game", cv, null, null);
+        if (currentPlayer != null) {
+            ContentValues cv = new ContentValues();
+            cv.put("current_player", currentPlayer.getId());
+            Tools.dbHelper.getDb().update("game", cv, null, null);
+        }
     }
 
     public int getTurnCounter() {

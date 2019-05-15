@@ -58,7 +58,6 @@ public abstract class Player {
         cv.put("owner", a.getOwner().getId());
         cv.put("_id", a.getId());
         Tools.dbHelper.getDb().insert("armies", null, cv);
-        updateScreen();
     }
 
 
