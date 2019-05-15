@@ -105,12 +105,6 @@ public class Game {
                     return players.get(i);
                 }
                 players.get(i).nextTurn();
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        activity.updateScreen();
-                    }
-                });
             }
         }
     }
