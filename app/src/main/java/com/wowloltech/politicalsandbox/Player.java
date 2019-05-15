@@ -57,23 +57,6 @@ public abstract class Player {
         cv.put("owner", a.getOwner().getId());
         cv.put("_id", a.getId());
         Tools.dbHelper.getDb().insert("armies", null, cv);
-        Runnable rn = new Runnable() {
-            @Override
-            public void run() {
-                Tools.game.getActivity().updateScreen();
-                synchronized (this) {
-                    this.notify();
-                }
-            }
-        };
-        synchronized (rn) {
-            Tools.game.getActivity().runOnUiThread(rn);
-            try {
-                rn.wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
 
@@ -199,7 +182,7 @@ public abstract class Player {
     public void combineArmy(Province selectedProvince) {
         int summaryArmy = 0;
         int summarySpeed = 10;
-  //      Log.d("myLog", selectedProvince.getArmies().toString());
+        //      Log.d("myLog", selectedProvince.getArmies().toString());
         for (Iterator<Army> i = selectedProvince.getArmies().iterator(); i.hasNext(); ) {
             Army cArmy = i.next();
             summaryArmy += cArmy.getStrength();
@@ -208,7 +191,7 @@ public abstract class Player {
             cArmy.getOwner().armies.remove(cArmy);
             Army.remove(cArmy, i);
         }
- //       Log.d("myLog", "" + summaryArmy);
+        //       Log.d("myLog", "" + summaryArmy);
         if (summaryArmy != 0) {
             selectedProvince.getOwner().addArmy(new Army(summaryArmy, selectedProvince, selectedProvince.getOwner(), Tools.getIdCounter(), summarySpeed));
             Tools.setIdCounter(Tools.getIdCounter() + 1);
@@ -248,6 +231,12 @@ public abstract class Player {
         army.getLocation().getArmies().remove(army);
         army.setLocation(province);
         province.getArmies().add(army);
+//        Tools.game.getActivity().runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                Tools.game.getActivity().updateScreen();
+//            }
+//        });
         Runnable rn = new Runnable() {
             @Override
             public void run() {
