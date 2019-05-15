@@ -15,12 +15,10 @@ public class Game {
     private int turnCounter = 0;
     private List<Player> players;
     private DatabaseHelper myDbHelper;
-    private int humanPlayerId;
 
     public Game(GameActivity activity) {
         this.activity = activity;
         this.players = new LinkedList<>();
-        humanPlayerId = getActivity().getSharedPreferences("save", Context.MODE_PRIVATE).getInt("player_id", 0);
         Tools.game = this;
     }
 
@@ -33,8 +31,11 @@ public class Game {
 //    }
 
     public Player addPlayerFromDb(int id, double money, int recruits, int isHuman) {
-        if (id == humanPlayerId)
-            return new HumanPlayer(id, money, recruits);
+        if (isHuman==1) {
+            HumanPlayer humanPlayer = new HumanPlayer(id, money, recruits);
+            currentPlayer = humanPlayer;
+            return humanPlayer;
+        }
         else
             return new AIPlayer(id, money, recruits);
     }
@@ -106,6 +107,9 @@ public class Game {
                     }
                 });
             }
+            if (players.size() == 1) {
+                return null;
+            }
         }
     }
 
@@ -124,7 +128,6 @@ public class Game {
         Log.d("myLog", dbName);
         Tools.dbHelper = myDbHelper;
         myDbHelper.readDatabase(this);
-        currentPlayer = findPlayerByID(humanPlayerId);
     }
 
     public Player findPlayerByID(int id) {

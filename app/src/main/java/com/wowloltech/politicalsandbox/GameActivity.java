@@ -176,20 +176,35 @@ public class GameActivity extends Activity implements View.OnClickListener {
 
             @Override
             protected Void doInBackground(Void... params) {
-                game.setCurrentPlayer((HumanPlayer)game.nextTurn());
+                HumanPlayer humanPlayer = (HumanPlayer) game.nextTurn();
+                if (humanPlayer != null)
+                game.setCurrentPlayer(humanPlayer);
                 return null;
             }
 
             @Override
             protected void onPostExecute(Void result) {
                 super.onPostExecute(result);
-                nextTurn.setEnabled(true);
                 if (game.getCurrentPlayer() != null) {
-                    currentTurn(game.getCurrentPlayer());
+                    nextTurn.setEnabled(true);
+                    if (game.getCurrentPlayer() != null) {
+                        currentTurn(game.getCurrentPlayer());
+                    }
+                    updateScreen();
+                } else {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    Tools.dbHelper.getDb().close();
+                    deleteDatabase(Tools.dbHelper.getDatabaseName());
+                    finish();
                 }
-                updateScreen();
             }
-        }.execute();
+        }.
+
+                execute();
     }
 
     public void setViews(Bundle b) {

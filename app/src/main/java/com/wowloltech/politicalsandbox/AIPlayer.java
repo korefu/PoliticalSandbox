@@ -30,7 +30,7 @@ public class AIPlayer extends Player {
             recruitableArmy = (int) (getMoneyIncome() * 100);
         else recruitableArmy = (int) (getMoney() * 50);
         recruitableArmy-=200;
-        //for (Province p : getProvinces()) combineArmy(p);
+        for (Province p : getProvinces()) combineArmy(p);
         for (Province p : getProvinces())
             for (Province n : Map.getNeighbours(p))
                 if (n.getOwner() != p.getOwner()) {
@@ -72,7 +72,7 @@ public class AIPlayer extends Player {
             }
         }
         for (int i = 0; i < borderProvinces.size(); i++) {
-            Log.d("myLog", toString()+" "+threats[i]+" "+"gthread "+gthreat+" "+recruitableArmy);
+            //Log.d("myLog", toString()+" "+threats[i]+" "+"gthread "+gthreat+" "+recruitableArmy);
             int defense = 0;
             for (Army a: borderProvinces.get(i).getArmies())
                 defense+=a.getStrength();

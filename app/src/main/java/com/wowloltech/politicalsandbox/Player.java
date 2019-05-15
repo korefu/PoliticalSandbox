@@ -57,12 +57,23 @@ public abstract class Player {
         cv.put("owner", a.getOwner().getId());
         cv.put("_id", a.getId());
         Tools.dbHelper.getDb().insert("armies", null, cv);
-        Tools.game.getActivity().runOnUiThread(new Runnable() {
+        Runnable rn = new Runnable() {
             @Override
             public void run() {
                 Tools.game.getActivity().updateScreen();
+                synchronized (this) {
+                    this.notify();
+                }
             }
-        });
+        };
+        synchronized (rn) {
+            Tools.game.getActivity().runOnUiThread(rn);
+            try {
+                rn.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 
@@ -106,8 +117,8 @@ public abstract class Player {
         this.money = money;
         ContentValues cv = new ContentValues();
         cv.put("money", money);
-        Tools.dbHelper.getDb().update("players", cv, "_id = ?", new String[]{String.valueOf(getId()+1)});
-        Log.d("myLog", String.valueOf(money) + " setmoney");
+        Tools.dbHelper.getDb().update("players", cv, "_id = ?", new String[]{String.valueOf(getId() + 1)});
+        //Log.d("myLog", String.valueOf(money) + " setmoney");
     }
 
     public int getRecruits() {
@@ -118,7 +129,7 @@ public abstract class Player {
         this.recruits = recruits;
         ContentValues cv = new ContentValues();
         cv.put("recruits", recruits);
-        Tools.dbHelper.getDb().update("players", cv, "_id = ?", new String[]{String.valueOf(getId()+1)});
+        Tools.dbHelper.getDb().update("players", cv, "_id = ?", new String[]{String.valueOf(getId() + 1)});
     }
 
     public void setIsHuman(boolean isHuman) {
@@ -126,10 +137,10 @@ public abstract class Player {
         ContentValues cv = new ContentValues();
         if (isHuman) {
             cv.put("is_human", 1);
-            Tools.dbHelper.getDb().update("players", cv, "_id = ?", new String[]{String.valueOf(getId()+1)});
+            Tools.dbHelper.getDb().update("players", cv, "_id = ?", new String[]{String.valueOf(getId() + 1)});
         } else {
             cv.put("is_human", 0);
-            Tools.dbHelper.getDb().update("players", cv, "_id = ?", new String[]{String.valueOf(getId()+1)});
+            Tools.dbHelper.getDb().update("players", cv, "_id = ?", new String[]{String.valueOf(getId() + 1)});
         }
     }
 
@@ -169,7 +180,7 @@ public abstract class Player {
     public void divideArmy(int strength1, int strength2, Army parentArmy) {
         parentArmy.getOwner().addArmy(new Army(strength1, parentArmy.getLocation(), parentArmy.getOwner(), Tools.getIdCounter(), parentArmy.getSpeed()));
         parentArmy.getOwner().addArmy(new Army(strength2, parentArmy.getLocation(), parentArmy.getOwner(), Tools.getIdCounter() + 1, parentArmy.getSpeed()));
-        Tools.setIdCounter(Tools.getIdCounter()+2);
+        Tools.setIdCounter(Tools.getIdCounter() + 2);
         Army.remove(parentArmy);
     }
 
@@ -180,7 +191,7 @@ public abstract class Player {
     public void pickMilitary(int strength, Province province) {
         Army army = new Army(strength, province, this, Tools.getIdCounter());
         addArmy(army);
-        Tools.setIdCounter(Tools.getIdCounter()+1);
+        Tools.setIdCounter(Tools.getIdCounter() + 1);
         setRecruits(getRecruits() - strength);
         setMoney(getMoney() - (double) strength / 50);
     }
@@ -188,57 +199,77 @@ public abstract class Player {
     public void combineArmy(Province selectedProvince) {
         int summaryArmy = 0;
         int summarySpeed = 10;
-        Log.d("myLog", selectedProvince.getArmies().toString());
+  //      Log.d("myLog", selectedProvince.getArmies().toString());
         for (Iterator<Army> i = selectedProvince.getArmies().iterator(); i.hasNext(); ) {
             Army cArmy = i.next();
-                summaryArmy += cArmy.getStrength();
-                if (summarySpeed > cArmy.getSpeed())
-                    summarySpeed = cArmy.getSpeed();
-                cArmy.getOwner().armies.remove(cArmy);
-                Army.remove(cArmy, i);
+            summaryArmy += cArmy.getStrength();
+            if (summarySpeed > cArmy.getSpeed())
+                summarySpeed = cArmy.getSpeed();
+            cArmy.getOwner().armies.remove(cArmy);
+            Army.remove(cArmy, i);
         }
-        Log.d("myLog", "" + summaryArmy);
+ //       Log.d("myLog", "" + summaryArmy);
         if (summaryArmy != 0) {
             selectedProvince.getOwner().addArmy(new Army(summaryArmy, selectedProvince, selectedProvince.getOwner(), Tools.getIdCounter(), summarySpeed));
-            Tools.setIdCounter(Tools.getIdCounter()+1);
+            Tools.setIdCounter(Tools.getIdCounter() + 1);
         }
 
     }
 
     public void attackProvince(Army army, Province province) {
-        Iterator<Army> i = province.getOwner().getArmies().iterator();
-        while (i.hasNext()) {
-            Army a = i.next();
+        if (province.getOwner() != army.getOwner()) {
+            Iterator<Army> i = province.getArmies().iterator();
+            while (i.hasNext()) {
+                Army a = i.next();
 //            Log.d("myLog", "" + army.getLocation().getX() + " " + army.getLocation().getY() + " " + army.getOwner() + " "
 //            + army.getStrength() + "\n" + province.getX() + " " + province.getY());
-            if (a.getLocation() == province && province.getOwner() != army.getOwner()) {
-                if (a.getStrength() > army.getStrength()) {
-                    a.setStrength(a.getStrength() - army.getStrength());
-                    Army.remove(army);
-                    return;
-                } else if (a.getStrength() == army.getStrength()) {
-                    Army.remove(army);
-                    Army.remove(a, i);
-                    a.getOwner().armies.remove(a);
-                    return;
-                } else {
-                    army.setStrength(army.getStrength() - a.getStrength());
-                    Army.remove(a, i);
-                    a.getOwner().armies.remove(a);
+                if (province.getOwner() != army.getOwner()) {
+                    if (a.getStrength() > army.getStrength()) {
+                        a.setStrength(a.getStrength() - army.getStrength());
+                        Army.remove(army);
+                        return;
+                    } else if (a.getStrength() == army.getStrength()) {
+                        Army.remove(army);
+                        Army.remove(a, i);
+                        a.getOwner().armies.remove(a);
+                        return;
+                    } else {
+                        army.setStrength(army.getStrength() - a.getStrength());
+                        Army.remove(a, i);
+                        a.getOwner().armies.remove(a);
+                    }
                 }
             }
+            province.getOwner().getProvinces().remove(province);
+            army.getOwner().getProvinces().add(province);
+            province.setOwner(army.getOwner());
         }
-        army.setSpeed(army.getSpeed()-1);
+        army.setSpeed(army.getSpeed() - 1);
+        army.getLocation().getArmies().remove(army);
         army.setLocation(province);
-        province.getOwner().getProvinces().remove(province);
-        province.setOwner(army.getOwner());
-        army.getOwner().getProvinces().add(province);
-        Tools.game.getActivity().runOnUiThread(new Runnable() {
+        province.getArmies().add(army);
+        Runnable rn = new Runnable() {
             @Override
             public void run() {
                 Tools.game.getActivity().updateScreen();
+                synchronized (this) {
+                    this.notify();
+                }
             }
-        });
+        };
+        synchronized (rn) {
+            Tools.game.getActivity().runOnUiThread(rn);
+            try {
+                rn.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public void nextTurn() {
@@ -256,10 +287,11 @@ public abstract class Player {
             setMoney(0);
             for (Iterator<Army> i = getArmies().iterator(); i.hasNext(); ) {
                 Army a = i.next();
-                a.getOwner().armies.remove(a);
                 a.getLocation().getArmies().remove(a);
                 Army.remove(a, i);
             }
         }
-    };
+    }
+
+    ;
 }

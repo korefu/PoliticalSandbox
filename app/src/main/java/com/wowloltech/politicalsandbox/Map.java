@@ -64,48 +64,24 @@ public class Map {
 
     public static LinkedList<Province> getNeighbours(Province location) {
         LinkedList<Province> neighbours = new LinkedList<>();
-        try {
+        if (location.getX() < width-1)
             neighbours.add(provinces[location.getY()][location.getX() + 1]);
-        } catch (Exception ignored) {
-        }
-        try {
+        if (location.getX() > 0)
             neighbours.add(provinces[location.getY()][location.getX() - 1]);
-        } catch (Exception ignored) {
-        }
+        if (location.getY() > 0)
+            neighbours.add(provinces[location.getY() - 1][location.getX()]);
+        if (location.getY() < height-1)
+            neighbours.add(provinces[location.getY() + 1][location.getX()]);
         if (location.getY() % 2 == 1) {
-            try {
-                neighbours.add(provinces[location.getY() - 1][location.getX()]);
-            } catch (Exception ignored) {
-            }
-            try {
-                neighbours.add(provinces[location.getY() + 1][location.getX()]);
-            } catch (Exception ignored) {
-            }
-            try {
+            if (location.getX() < width-1 && location.getY() > 0)
                 neighbours.add(provinces[location.getY() - 1][location.getX() + 1]);
-            } catch (Exception ignored) {
-            }
-            try {
+            if (location.getX() < width-1 && location.getY() < height-1)
                 neighbours.add(provinces[location.getY() + 1][location.getX() + 1]);
-            } catch (Exception ignored) {
-            }
         } else {
-            try {
-                neighbours.add(provinces[location.getY() - 1][location.getX()]);
-            } catch (Exception ignored) {
-            }
-            try {
-                neighbours.add(provinces[location.getY() + 1][location.getX()]);
-            } catch (Exception ignored) {
-            }
-            try {
+            if (location.getX() > 0 && location.getY() > 0)
                 neighbours.add(provinces[location.getY() - 1][location.getX() - 1]);
-            } catch (Exception ignored) {
-            }
-            try {
+            if (location.getX() > 0 && location.getY() < height-1)
                 neighbours.add(provinces[location.getY() + 1][location.getX() - 1]);
-            } catch (Exception ignored) {
-            }
         }
         return neighbours;
     }

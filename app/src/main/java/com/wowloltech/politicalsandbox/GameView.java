@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.support.v4.view.ScaleGestureDetectorCompat;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -202,6 +203,7 @@ public class GameView extends View {
             Province province = findProvinceByTouch(e.getX(), e.getY());
             if (province != null) {
                 selectedProvince = province;
+                Log.d("myLog", selectedProvince.getArmies().toString());
                 if (!isArmyMoving())
                     activity.openContextMenu(activity.map);
                 else if (selectedProvince.getSelected()) {

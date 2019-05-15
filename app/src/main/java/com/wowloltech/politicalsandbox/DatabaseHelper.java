@@ -134,6 +134,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         int currentPlayerId = c.getInt(currentPlayerColIndex);
         c.close();
         c = mDataBase.query("players", null, null, null, null, null, null);
+        int player_id = game.getActivity().getSharedPreferences("save", Context.MODE_PRIVATE).getInt("player_id", -1);
         if (c.moveToFirst()) {
             int moneyColIndex = c.getColumnIndex("money");
             int recruitsColIndex = c.getColumnIndex("recruits");
@@ -143,11 +144,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 int id = c.getInt(idColIndex) - 1;
                 int recruits = c.getInt(recruitsColIndex);
                 double money = c.getDouble(moneyColIndex);
-                int isHuman = c.getInt(isHumanColIndex);
+                int isHuman = 0;
+                if (player_id == -1)
+                    isHuman = c.getInt(isHumanColIndex);
+                else if (id == player_id) isHuman = 1;
+                else isHuman = 0;
                 game.getPlayers().add(game.addPlayerFromDb(id, money, recruits, isHuman));
             } while (c.moveToNext());
         }
-//        game.setCurrentPlayerFromDb((HumanPlayer) game.findPlayerByID(currentPlayerId));
+        game.getActivity().getSharedPreferences("save", Context.MODE_PRIVATE).edit().putInt("player_id", -1).apply();
         c.close();
         Log.d(LOG_TAG, game.getPlayers().toString());
         c = mDataBase.query("map", null, null, null, null, null, null);
