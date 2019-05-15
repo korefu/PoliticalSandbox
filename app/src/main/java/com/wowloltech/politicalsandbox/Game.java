@@ -92,6 +92,9 @@ public class Game {
             }
 
             for (; i < players.size(); i++) {
+                if (players.size() == 1) {
+                    return null;
+                }
                 if (players.get(i).getProvinces().size() == 0) {
                     removePlayer(players.get(i).getId());
                     i--;
@@ -108,9 +111,6 @@ public class Game {
                         activity.updateScreen();
                     }
                 });
-            }
-            if (players.size() == 1) {
-                return null;
             }
         }
     }

@@ -232,8 +232,12 @@ public abstract class Player {
         army.getLocation().getArmies().remove(army);
         army.setLocation(province);
         province.getArmies().add(army);
-
-        updateScreen();
+        try {
+            updateScreen();
+        } catch (Exception e) {
+            Log.e("myLog", "oops");
+            throw  e;
+        }
         try {
             Thread.sleep(50);
         } catch (InterruptedException e) {
@@ -281,6 +285,11 @@ public abstract class Player {
                     e.printStackTrace();
                 }
             }
+        }
+        try {
+            Thread.sleep(5);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 }

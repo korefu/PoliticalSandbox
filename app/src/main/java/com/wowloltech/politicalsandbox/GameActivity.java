@@ -40,6 +40,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
     private int color;
     private boolean isMenuHidden = true;
     private Game game;
+    AsyncTask gameThread;
 
     public Game getGame() {
         return game;
@@ -168,7 +169,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
     }
 
     public void nextTurn() {
-        new AsyncTask<Void, Void, Void>() {
+        gameThread = new AsyncTask<Void, Void, Void>() {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();

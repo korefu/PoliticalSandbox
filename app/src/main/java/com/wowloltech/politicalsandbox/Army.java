@@ -11,6 +11,7 @@ public class Army {
     private Player owner;
     private int id;
 
+
     public Army(int strength, Province location, Player owner, int id) {
         this.strength = strength;
         this.location = location;
