@@ -196,8 +196,8 @@ public class GameActivity extends Activity implements View.OnClickListener {
                     Tools.dbHelper.getDb().close();
                     Log.d("myLog", Tools.dbHelper.getDatabaseName());
                     deleteDatabase(Tools.dbHelper.getDatabaseName());
+                    getSharedPreferences("save", Activity.MODE_PRIVATE).edit().putString("save_database", "null").commit();
                     GameActivity.this.finish();
-                    finish();
                 }
             }
         }.
