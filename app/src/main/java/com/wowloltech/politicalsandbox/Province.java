@@ -15,12 +15,28 @@ public class Province {
     private Player owner;
     private boolean selected = false;
     private List<Army> armies;
+    private  Type type;
+
+    public Province(int x, int y, int id) {
+        this.x = x;
+        this.y = y;
+        this.id = id;
+        type = Type.VOID;
+        owner = null;
+        income = 0;
+        recruits = 0;
+        armies = null;
+    }
+
+    public Type getType() {
+        return type;
+    }
 
     public List<Army> getArmies() {
         return armies;
     }
 
-    public Province(int x, int y, int id, int recruits, double income, Player owner) {
+    public Province(int x, int y, int id, int recruits, double income, Player owner, Type type) {
         this.x = x;
         this.y = y;
         this.id = id;
@@ -28,6 +44,7 @@ public class Province {
         this.income = income;
         this.owner = owner;
         armies = new LinkedList<>();
+        this.type = type;
     }
 
 
@@ -79,6 +96,22 @@ public class Province {
         ContentValues cv = new ContentValues();
         cv.put("owner", owner.getId());
         Tools.dbHelper.getDb().update("map", cv, "_id = ?", new String[]{String.valueOf(getId() + 1)});
+    }
+
+    enum Type {
+        VOID(0), PLAIN(1);
+        int value;
+
+        Type(int i) {
+            value = i;
+        }
+
+        public static Type valueOf(int type) {
+            for (Type t : values())
+                if (t.value == type)
+                    return t;
+            return null;
+        }
     }
 }
 

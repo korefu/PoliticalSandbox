@@ -64,24 +64,32 @@ public class Map {
 
     public static LinkedList<Province> getNeighbours(Province location) {
         LinkedList<Province> neighbours = new LinkedList<>();
-        if (location.getX() < width-1)
-            neighbours.add(provinces[location.getY()][location.getX() + 1]);
+        if (location.getX() < width - 1)
+            if (provinces[location.getY()][location.getX() + 1].getType() != Province.Type.VOID)
+                neighbours.add(provinces[location.getY()][location.getX() + 1]);
         if (location.getX() > 0)
-            neighbours.add(provinces[location.getY()][location.getX() - 1]);
+            if (provinces[location.getY()][location.getX() - 1].getType() != Province.Type.VOID)
+                neighbours.add(provinces[location.getY()][location.getX() - 1]);
         if (location.getY() > 0)
-            neighbours.add(provinces[location.getY() - 1][location.getX()]);
-        if (location.getY() < height-1)
-            neighbours.add(provinces[location.getY() + 1][location.getX()]);
+            if (provinces[location.getY() - 1][location.getX()].getType() != Province.Type.VOID)
+                neighbours.add(provinces[location.getY() - 1][location.getX()]);
+        if (location.getY() < height - 1)
+            if (provinces[location.getY() + 1][location.getX()].getType() != Province.Type.VOID)
+                neighbours.add(provinces[location.getY() + 1][location.getX()]);
         if (location.getY() % 2 == 1) {
-            if (location.getX() < width-1 && location.getY() > 0)
-                neighbours.add(provinces[location.getY() - 1][location.getX() + 1]);
-            if (location.getX() < width-1 && location.getY() < height-1)
-                neighbours.add(provinces[location.getY() + 1][location.getX() + 1]);
+            if (location.getX() < width - 1 && location.getY() > 0)
+                if (provinces[location.getY() - 1][location.getX() + 1].getType() != Province.Type.VOID)
+                    neighbours.add(provinces[location.getY() - 1][location.getX() + 1]);
+            if (location.getX() < width - 1 && location.getY() < height - 1)
+                if (provinces[location.getY() + 1][location.getX() + 1].getType() != Province.Type.VOID)
+                    neighbours.add(provinces[location.getY() + 1][location.getX() + 1]);
         } else {
             if (location.getX() > 0 && location.getY() > 0)
-                neighbours.add(provinces[location.getY() - 1][location.getX() - 1]);
-            if (location.getX() > 0 && location.getY() < height-1)
-                neighbours.add(provinces[location.getY() + 1][location.getX() - 1]);
+                if (provinces[location.getY() - 1][location.getX() - 1].getType() != Province.Type.VOID)
+                    neighbours.add(provinces[location.getY() - 1][location.getX() - 1]);
+            if (location.getX() > 0 && location.getY() < height - 1)
+                if (provinces[location.getY() + 1][location.getX() - 1].getType() != Province.Type.VOID)
+                    neighbours.add(provinces[location.getY() + 1][location.getX() - 1]);
         }
         return neighbours;
     }

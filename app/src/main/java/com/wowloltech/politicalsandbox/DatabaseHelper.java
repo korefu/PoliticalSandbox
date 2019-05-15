@@ -160,14 +160,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             int idColIndex = c.getColumnIndex("_id");
             int incomeColIndex = c.getColumnIndex("incomeLevel");
             int ownerColIndex = c.getColumnIndex("owner");
+            int typeColIndex = c.getColumnIndex("type");
             do {
-                int id = c.getInt(idColIndex) - 1;
-                double income = c.getInt(incomeColIndex);
-                int ownerID = c.getInt(ownerColIndex);
+                Province.Type type = Province.Type.valueOf(c.getInt(typeColIndex));
+                if (type != Province.Type.VOID) {
+                    int id = c.getInt(idColIndex) - 1;
+                    double income = c.getInt(incomeColIndex);
+                    int ownerID = c.getInt(ownerColIndex);
 
-                Log.d(LOG_TAG, "_id = " + id + ", income = " + income + ", owner = " + ownerID);
-                Map.getProvinces()[id / Map.getWidth()][id % Map.getWidth()] = new Province(id % Map.getWidth(), id / Map.getWidth(), id, (int) income * 20, income, game.findPlayerByID(ownerID));
-                game.findPlayerByID(ownerID).getProvinces().add(Map.getProvinces()[id / Map.getWidth()][id % Map.getWidth()]);
+                    Log.d(LOG_TAG, "_id = " + id + ", income = " + income + ", owner = " + ownerID);
+                    Map.getProvinces()[id / Map.getHeight()][id % Map.getWidth()] = new Province(id % Map.getWidth(), id / Map.getHeight(), id, (int) income * 20, income, game.findPlayerByID(ownerID), type);
+                    game.findPlayerByID(ownerID).getProvinces().add(Map.getProvinces()[id / Map.getHeight()][id % Map.getWidth()]);
+                } else {
+                    int id = c.getInt(idColIndex) - 1;
+                    Map.getProvinces()[id / Map.getHeight()][id % Map.getWidth()] = new Province(id % Map.getWidth(), id / Map.getHeight(), id);
+                }
             } while (c.moveToNext());
         }
         c.close();

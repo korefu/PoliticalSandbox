@@ -45,8 +45,8 @@ public class NewGameFragment extends Fragment implements View.OnClickListener {
         while (iterator.hasNext()) {
             String map = iterator.next();
             if (map.length() <= 6) { iterator.remove(); continue; }
-            if (!map.substring(map.length() - 6).equals("map.db")) { iterator.remove(); continue; }
-            else iterator.set(map.substring(0, map.length() - 6));
+            if (!map.substring(map.length() - 3).equals(".db")) { iterator.remove(); continue; }
+            else iterator.set(map.substring(0, map.length() - 3));
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, maps);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -56,7 +56,7 @@ public class NewGameFragment extends Fragment implements View.OnClickListener {
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
                 String item = (String) parent.getItemAtPosition(position);
-                getActivity().getSharedPreferences("save", Activity.MODE_PRIVATE).edit().putString("map_database", item + "map.db").apply();
+                getActivity().getSharedPreferences("save", Activity.MODE_PRIVATE).edit().putString("map_database", item + ".db").apply();
             }
 
             @Override

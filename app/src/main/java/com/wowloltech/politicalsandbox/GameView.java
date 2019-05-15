@@ -145,36 +145,36 @@ public class GameView extends View {
     }
 
     private void drawPathByProvince(Canvas canvas, Province province) {
-        name.append(String.valueOf(province.getIncome()));
-        for (Player p : game.getPlayers())
-            for (Army a : p.getArmies())
-                if (a.getLocation().getId() == province.getId())
-                    name.append(" " + String.valueOf(a.getStrength()));
-        if (!province.getSelected())
-            p.setColor(Map.getColor(province.getOwner().getId()));
-        else
-            p.setColor(Map.getColor(province.getOwner().getId()) - 0x66000000);
+        if (province.getType() != Province.Type.VOID) {
+            name.append(String.valueOf(province.getIncome()));
+            for (Player p : game.getPlayers())
+                for (Army a : p.getArmies())
+                    if (a.getLocation().getId() == province.getId())
+                        name.append(" " + String.valueOf(a.getStrength()));
+            if (!province.getSelected())
+                p.setColor(Map.getColor(province.getOwner().getId()));
+            else
+                p.setColor(Map.getColor(province.getOwner().getId()) - 0x66000000);
 
-        if (province.getY() % 2 == 1) {
-            provincePath.offset((float) (size * Math.sqrt(3) * province.getX() + size * Math.sqrt(3) * 0.5), (float) (size * 1.5 * province.getY()));
-            canvas.drawPath(provincePath, p);
-            canvas.drawText(name.toString(), (float) (size * Math.sqrt(3) * province.getX() + size * Math.sqrt(3)), (float) (pText.getTextSize() / 2 + size + size * 1.5 * province.getY()), pText);
+            if (province.getY() % 2 == 1) {
+                provincePath.offset((float) (size * Math.sqrt(3) * province.getX() + size * Math.sqrt(3) * 0.5), (float) (size * 1.5 * province.getY()));
+                canvas.drawPath(provincePath, p);
+                canvas.drawText(name.toString(), (float) (size * Math.sqrt(3) * province.getX() + size * Math.sqrt(3)), (float) (pText.getTextSize() / 2 + size + size * 1.5 * province.getY()), pText);
 
-        } else {
-            provincePath.offset((float) (size * Math.sqrt(3) * province.getX()), (float) (size * 1.5 * province.getY()));
-            canvas.drawPath(provincePath, p);
-            canvas.drawText(name.toString(), (float) (size * Math.sqrt(3) * province.getX() + size * Math.sqrt(3) * 0.5), (float) (size + pText.getTextSize() / 2 + size * 1.5 * province.getY()), pText);
+            } else {
+                provincePath.offset((float) (size * Math.sqrt(3) * province.getX()), (float) (size * 1.5 * province.getY()));
+                canvas.drawPath(provincePath, p);
+                canvas.drawText(name.toString(), (float) (size * Math.sqrt(3) * province.getX() + size * Math.sqrt(3) * 0.5), (float) (size + pText.getTextSize() / 2 + size * 1.5 * province.getY()), pText);
+            }
+            if (mScaleFactor > 0.5f)
+                canvas.drawPath(provincePath, pBlack);
+
+            provincePath.offset(-(float) (size * Math.sqrt(3) * province.getX()), -(float) (size * 1.5 * province.getY()));
+            if (province.getY() % 2 == 1) {
+                provincePath.offset(-(float) (size * Math.sqrt(3) * 0.5), 0);
+            }
+            name.delete(0, name.length());
         }
-
-
-        if (mScaleFactor > 0.5f)
-            canvas.drawPath(provincePath, pBlack);
-
-        provincePath.offset(-(float) (size * Math.sqrt(3) * province.getX()), -(float) (size * 1.5 * province.getY()));
-        if (province.getY() % 2 == 1) {
-            provincePath.offset(-(float) (size * Math.sqrt(3) * 0.5), 0);
-        }
-        name.delete(0, name.length());
     }
 
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
@@ -201,7 +201,7 @@ public class GameView extends View {
         public boolean onSingleTapUp(MotionEvent e) {
             //Toast.makeText(MainActivity.this,"onTouch " + e.getX() + " " + e.getY(),Toast.LENGTH_SHORT).show();
             Province province = findProvinceByTouch(e.getX(), e.getY());
-            if (province != null) {
+            if (province != null && province.getType() != Province.Type.VOID) {
                 selectedProvince = province;
                 Log.d("myLog", selectedProvince.getArmies().toString());
                 if (!isArmyMoving())
