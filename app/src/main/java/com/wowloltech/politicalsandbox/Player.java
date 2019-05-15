@@ -1,6 +1,7 @@
 package com.wowloltech.politicalsandbox;
 
 import android.content.ContentValues;
+import android.os.Looper;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -57,6 +58,7 @@ public abstract class Player {
         cv.put("owner", a.getOwner().getId());
         cv.put("_id", a.getId());
         Tools.dbHelper.getDb().insert("armies", null, cv);
+        updateScreen();
     }
 
 
@@ -231,29 +233,8 @@ public abstract class Player {
         army.getLocation().getArmies().remove(army);
         army.setLocation(province);
         province.getArmies().add(army);
-//        Tools.game.getActivity().runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                Tools.game.getActivity().updateScreen();
-//            }
-//        });
-        Runnable rn = new Runnable() {
-            @Override
-            public void run() {
-                Tools.game.getActivity().updateScreen();
-                synchronized (this) {
-                    this.notify();
-                }
-            }
-        };
-        synchronized (rn) {
-            Tools.game.getActivity().runOnUiThread(rn);
-            try {
-                rn.wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+
+        updateScreen();
         try {
             Thread.sleep(50);
         } catch (InterruptedException e) {
@@ -282,5 +263,25 @@ public abstract class Player {
         }
     }
 
-    ;
+    private void updateScreen() {
+        if (Looper.getMainLooper().getThread() != Thread.currentThread()) {
+            Runnable rn = new Runnable() {
+                @Override
+                public void run() {
+                    Tools.game.getActivity().updateScreen();
+                    synchronized (this) {
+                        this.notify();
+                    }
+                }
+            };
+            synchronized (rn) {
+                Tools.game.getActivity().runOnUiThread(rn);
+                try {
+                    rn.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 }
