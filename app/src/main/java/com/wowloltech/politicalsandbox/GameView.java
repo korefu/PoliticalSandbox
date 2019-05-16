@@ -1,20 +1,14 @@
 package com.wowloltech.politicalsandbox;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.Rect;
-import android.util.Log;
 import android.view.GestureDetector;
-import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -26,18 +20,17 @@ public class GameView extends View {
     Paint pBlack;
     Paint pText;
     StringBuilder name;
+    private float sqrt3 = (float) Math.sqrt(3);
     private Province selectedProvince;
     private GameActivity activity;
     private Game game;
+    private boolean justScaled = false;
     private int selectedX;
     private int selectedY;
     private boolean isArmyMoving = false;
     private boolean longPress = false;
     private Army movingArmy = null;
 
-
-    private float mLastTouchX;
-    private float mLastTouchY;
     private float mPosX;
     private float mPosY;
 
@@ -76,10 +69,10 @@ public class GameView extends View {
 
     private void createProvincePath(Path provincePath) {
         provincePath.moveTo((float) 0, (float) (size * 0.5));
-        provincePath.lineTo((float) (size * Math.sqrt(3) * 0.5), (float) (0));
-        provincePath.lineTo((float) (size * Math.sqrt(3)), (float) (size * 0.5));
-        provincePath.lineTo((float) (size * Math.sqrt(3)), (float) (size * 1.5));
-        provincePath.lineTo((float) (size * Math.sqrt(3) * 0.5), size * 2);
+        provincePath.lineTo((float) (size * sqrt3 * 0.5), (float) (0));
+        provincePath.lineTo((float) (size * sqrt3), (float) (size * 0.5));
+        provincePath.lineTo((float) (size * sqrt3), (float) (size * 1.5));
+        provincePath.lineTo((float) (size * sqrt3 * 0.5), size * 2);
         provincePath.lineTo((float) 0, (float) (size * 1.5));
         provincePath.close();
     }
@@ -105,52 +98,9 @@ public class GameView extends View {
         gestureDetector.onTouchEvent(ev);
 
         final int action = ev.getAction();
-
-
-        switch (action & MotionEvent.ACTION_MASK) {
-            case MotionEvent.ACTION_DOWN: {
-
-                final float x = (ev.getX() - scalePointX) / mScaleFactor;
-                final float y = (ev.getY() - scalePointY) / mScaleFactor;
-                cX = x - mPosX + scalePointX; // canvas X
-                cY = y - mPosY + scalePointY; // canvas Y
-
-                // Remember where we started
-                mLastTouchX = x;
-                mLastTouchY = y;
-                break;
-            }
-            case MotionEvent.ACTION_MOVE: {
-                final float x = (ev.getX() - scalePointX) / mScaleFactor;
-                final float y = (ev.getY() - scalePointY) / mScaleFactor;
-                cX = x - mPosX + scalePointX; // canvas X
-                cY = y - mPosY + scalePointY; // canvas Y
-
-
-                // Only move if the ScaleGestureDetector isn't processing a gesture.
-                if (!mScaleDetector.isInProgress()) {
-                    final float dx = x - mLastTouchX; // change in X
-                    final float dy = y - mLastTouchY; // change in Y
-
-                    if (dx < 1000)
-                        mPosX += dx;
-                    if (dy < 1000)
-                        mPosY += dy;
-
-                    invalidate();
-                }
-
-                mLastTouchX = x;
-                mLastTouchY = y;
-
-                break;
-
-            }
-            case MotionEvent.ACTION_UP: {
-                mLastTouchX = 0;
-                mLastTouchY = 0;
-                invalidate();
-            }
+        if (action == MotionEvent.ACTION_DOWN) {
+            cX = (ev.getX() - scalePointX) / mScaleFactor - mPosX + scalePointX; // canvas X
+            cY = (ev.getY() - scalePointY) / mScaleFactor - mPosY + scalePointY; // canvas Y
         }
         return true;
     }
@@ -175,24 +125,24 @@ public class GameView extends View {
                 p.setColor(province.getOwner().getColor() - 0x66000000);
 
             if (province.getY() % 2 == 1) {
-                provincePath.offset((float) (size * Math.sqrt(3) * province.getX() + size * Math.sqrt(3) * 0.5), (float) (size * 1.5 * province.getY()));
+                provincePath.offset(size * sqrt3 * province.getX() + size * sqrt3 * 0.5f, 1.5f * size * province.getY());
                 canvas.drawPath(provincePath, p);
                 if (mScaleFactor > 0.5f) {
                     canvas.drawPath(provincePath, pBlack);
-                    canvas.drawText(name.toString(), (float) (size * Math.sqrt(3) * province.getX() + size * Math.sqrt(3)), (float) (pText.getTextSize() / 2 + size + size * 1.5 * province.getY()), pText);
+                    canvas.drawText(name.toString(), size * sqrt3 * province.getX() + size * sqrt3, pText.getTextSize() / 2 + size + size * 1.5f * province.getY(), pText);
                 }
             } else {
-                provincePath.offset((float) (size * Math.sqrt(3) * province.getX()), (float) (size * 1.5 * province.getY()));
+                provincePath.offset(size * sqrt3 * province.getX(), size * 1.5f * province.getY());
                 canvas.drawPath(provincePath, p);
                 if (mScaleFactor > 0.5f) {
                     canvas.drawPath(provincePath, pBlack);
-                    canvas.drawText(name.toString(), (float) (size * Math.sqrt(3) * province.getX() + size * Math.sqrt(3) * 0.5), (float) (size + pText.getTextSize() / 2 + size * 1.5 * province.getY()), pText);
+                    canvas.drawText(name.toString(), size * sqrt3 * province.getX() + size * sqrt3 * 0.5f, size + pText.getTextSize() / 2 + size * 1.5f * province.getY(), pText);
                 }
             }
 
-            provincePath.offset(-(float) (size * Math.sqrt(3) * province.getX()), -(float) (size * 1.5 * province.getY()));
+            provincePath.offset(-size * sqrt3 * province.getX(), -size * 1.5f * province.getY());
             if (province.getY() % 2 == 1) {
-                provincePath.offset(-(float) (size * Math.sqrt(3) * 0.5), 0);
+                provincePath.offset(-size * sqrt3 * 0.5f, 0);
             }
             name.delete(0, name.length());
         }
@@ -204,8 +154,8 @@ public class GameView extends View {
         if ((tempY <= size * 1.5 && tempY >= size * 0.5) || (tempY >= size * 2))
             selectedY = (int) Math.floor((cY) / (size * 1.5));
         else {
-            int tempX = (int) cX % (int) (size * Math.sqrt(3));
-            final float halfWidth = (float) (size * Math.sqrt(3) / 2);
+            int tempX = (int) cX % (int) (size * sqrt3);
+            final float halfWidth = size * sqrt3 / 2;
             if (tempY < size * 0.5) {
                 if (tempX > halfWidth)
                     selectedY = (int) Math.floor((cY - (size * 0.5 * (tempX - halfWidth) / halfWidth)) / (size * 1.5));
@@ -213,15 +163,15 @@ public class GameView extends View {
                     selectedY = (int) Math.floor((cY - (size * 0.5 * (halfWidth - tempX) / halfWidth)) / (size * 1.5));
             } else if (tempY > size * 1.5 && tempY < size * 2) {
                 if (tempX > halfWidth)
-                    selectedY = (int) Math.floor((cY - (size * 0.5 * (size * Math.sqrt(3) - tempX) / halfWidth)) / (size * 1.5));
+                    selectedY = (int) Math.floor((cY - (size * 0.5 * (size * sqrt3 - tempX) / halfWidth)) / (size * 1.5));
                 else
                     selectedY = (int) Math.floor((cY - (size * 0.5 * tempX / halfWidth)) / (size * 1.5));
             }
         }
         if (selectedY % 2 == 0)
-            selectedX = (int) Math.floor(cX / (int) (Math.sqrt(3) * size));
+            selectedX = (int) Math.floor(cX / (int) (sqrt3 * size));
         else
-            selectedX = (int) Math.floor((cX - size * Math.sqrt(3) / 2) / (Math.sqrt(3) * size));
+            selectedX = (int) Math.floor((cX - size * sqrt3 / 2) / (sqrt3 * size));
         try {
             return Map.getProvinces()[selectedY][selectedX];
         } catch (Exception e) {
@@ -259,14 +209,31 @@ public class GameView extends View {
 
             // Don't let the object get too small or too large.
             mScaleFactor = Math.max(0.1f, Math.min(mScaleFactor, 10.0f));
-
             invalidate();
             return true;
         }
 
+        @Override
+        public void onScaleEnd(ScaleGestureDetector detector) {
+            justScaled = true;
+            super.onScaleEnd(detector);
+        }
     }
 
     private class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            cX = (e2.getX() - scalePointX) / mScaleFactor - mPosX + scalePointX; // canvas X
+            cY = (e2.getY() - scalePointY) / mScaleFactor - mPosY + scalePointY; // canvas Y
+
+            // Only move if the ScaleGestureDetector isn't processing a gesture.
+            if (!mScaleDetector.isInProgress()) {
+                mPosX -= distanceX/mScaleFactor;
+                mPosY -= distanceY/mScaleFactor;
+                invalidate();
+            }
+            return true;
+        }
 
         @Override
         public void onLongPress(MotionEvent e) {
@@ -285,7 +252,7 @@ public class GameView extends View {
 
         @Override
         public boolean onSingleTapUp(MotionEvent e) {
-        //    Toast.makeText(activity, "onTouch " + e.getX() + " " + e.getY(), Toast.LENGTH_SHORT).show();
+            //    Toast.makeText(activity, "onTouch " + e.getX() + " " + e.getY(), Toast.LENGTH_SHORT).show();
             Province province = findProvinceByTouch();
             if (province != null && province.getType() != Province.Type.VOID && !activity.AITurn) {
                 selectedProvince = province;
