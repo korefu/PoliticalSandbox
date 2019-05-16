@@ -1,6 +1,7 @@
 package com.wowloltech.politicalsandbox;
 
 import android.content.ContentValues;
+import android.graphics.Color;
 import android.os.Looper;
 import android.util.Log;
 
@@ -15,11 +16,10 @@ public abstract class Player {
     private List<Player> wars;
     private List<Event> events;
     private List<Army> armies;
-    private Ruler ruler;
     private double money;
+    private int color;
     private int recruits;
     private boolean isHuman;
-//    public int recruits;
 
     public Player(int id) {
         this.id = id;
@@ -27,20 +27,19 @@ public abstract class Player {
         wars = new LinkedList<>();
         events = new LinkedList<>();
         armies = new ArrayList<>();
-        this.ruler = new Ruler(3, 3, 3);
         this.money = 0;
         this.recruits = 1000;
     }
 
-    public Player(int id, double money, int recruits) {
+    public Player(int id, double money, int recruits, int color) {
         this.id = id;
         this.money = money;
         this.recruits = recruits;
+        this.color = color;
         armies = new ArrayList<>();
         provinces = new ArrayList<>();
         wars = new LinkedList<>();
         events = new LinkedList<>();
-        this.ruler = new Ruler(3, 3, 3);
     }
 
 
@@ -60,6 +59,9 @@ public abstract class Player {
         Tools.dbHelper.getDb().insert("armies", null, cv);
     }
 
+    public int getColor() {
+        return color;
+    }
 
     public List<Province> getProvinces() {
         return provinces;
@@ -83,14 +85,6 @@ public abstract class Player {
 
     public List<Army> getArmies() {
         return armies;
-    }
-
-    public Ruler getRuler() {
-        return ruler;
-    }
-
-    public void setRuler(Ruler ruler) {
-        this.ruler = ruler;
     }
 
     public double getMoney() {
@@ -155,11 +149,6 @@ public abstract class Player {
         return income;
     }
 
-    private void unleashWar(Player p) {
-        wars.add(p);
-        p.wars.add(this);
-        p.events.add(Event.WAR);
-    }
 
     public void divideArmy(int strength1, int strength2, Army parentArmy) {
         parentArmy.getOwner().addArmy(new Army(strength1, parentArmy.getLocation(), parentArmy.getOwner(), Tools.getIdCounter(), parentArmy.getSpeed()));

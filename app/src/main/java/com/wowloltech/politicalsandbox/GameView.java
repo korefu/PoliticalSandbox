@@ -146,15 +146,15 @@ public class GameView extends View {
 
     private void drawPathByProvince(Canvas canvas, Province province) {
         if (province.getType() != Province.Type.VOID) {
-            name.append(String.valueOf(province.getIncome()));
+            name.append(province.getIncome());
             for (Player p : game.getPlayers())
                 for (Army a : p.getArmies())
                     if (a.getLocation().getId() == province.getId())
-                        name.append(" " + String.valueOf(a.getStrength()));
+                        name.append(" " + a.getStrength());
             if (!province.getSelected())
-                p.setColor(Map.getColor(province.getOwner().getId()));
+                p.setColor(province.getOwner().getColor());
             else
-                p.setColor(Map.getColor(province.getOwner().getId()) - 0x66000000);
+                p.setColor(province.getOwner().getColor() - 0x66000000);
 
             if (province.getY() % 2 == 1) {
                 provincePath.offset((float) (size * Math.sqrt(3) * province.getX() + size * Math.sqrt(3) * 0.5), (float) (size * 1.5 * province.getY()));
@@ -195,6 +195,20 @@ public class GameView extends View {
             deltaX += (int) (distanceX);
             deltaY += (int) (distanceY);
             return true;
+        }
+
+        @Override
+        public void onLongPress(MotionEvent e) {
+            super.onLongPress(e);
+            Province province = findProvinceByTouch(e.getX(), e.getY());
+            if (province != null && province.getType() != Province.Type.VOID && province.getOwner() == game.getCurrentPlayer()
+                    && !isArmyMoving && province.getArmies().size()>0) {
+                selectedProvince = province;
+                province.getOwner().combineArmy(province);
+                activity.movingArmy(province.getArmies().get(0));
+                invalidate();
+            }
+            invalidate();
         }
 
         @Override

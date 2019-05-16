@@ -140,16 +140,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             int recruitsColIndex = c.getColumnIndex("recruits");
             int isHumanColIndex = c.getColumnIndex("is_human");
             int idColIndex = c.getColumnIndex("_id");
+            int colorColIndex = c.getColumnIndex("color");
             do {
                 int id = c.getInt(idColIndex) - 1;
                 int recruits = c.getInt(recruitsColIndex);
                 double money = c.getDouble(moneyColIndex);
+                int color = c.getInt(colorColIndex);
                 int isHuman = 0;
                 if (player_id == -1)
                     isHuman = c.getInt(isHumanColIndex);
                 else if (id == player_id) isHuman = 1;
                 else isHuman = 0;
-                game.getPlayers().add(game.addPlayerFromDb(id, money, recruits, isHuman));
+                game.getPlayers().add(game.addPlayerFromDb(id, money, recruits, isHuman, color));
             } while (c.moveToNext());
         }
         game.getActivity().getSharedPreferences("save", Context.MODE_PRIVATE).edit().putInt("player_id", -1).apply();

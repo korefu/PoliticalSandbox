@@ -8,8 +8,8 @@ public class HumanPlayer extends Player {
         setIsHuman(true);
     }
 
-    public HumanPlayer(int id, double money, int recruits) {
-        super(id, money, recruits);
+    public HumanPlayer(int id, double money, int recruits, int color) {
+        super(id, money, recruits, color);
         this.setIsHuman(true);
     }
 

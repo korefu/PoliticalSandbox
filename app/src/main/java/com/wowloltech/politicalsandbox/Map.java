@@ -33,23 +33,6 @@ public class Map {
         Map.provinces = provinces;
     }
 
-    public static int getColor(int idOfPlayer) {
-        switch (idOfPlayer) {
-            case 0:
-                return Color.BLUE;
-            case 1:
-                return Color.RED;
-            case 2:
-                return Color.GREEN;
-            case 3:
-                return Color.YELLOW;
-            case 4:
-                return Color.CYAN;
-            default:
-                return Color.argb(255, (int) (Math.random() * 255), (int) (Math.random() * 255), (int) (Math.random() * 255));
-        }
-    }
-
     public static Province findProvinceByID(int id) {
         try {
             return Map.provinces[id / Map.width][id % Map.width];

@@ -6,8 +6,8 @@ import java.util.List;
 
 public class AIPlayer extends Player {
 
-    public AIPlayer(int id, double money, int recruits) {
-        super(id, money, recruits);
+    public AIPlayer(int id, double money, int recruits, int color) {
+        super(id, money, recruits, color);
         this.setIsHuman(false);
     }
 
