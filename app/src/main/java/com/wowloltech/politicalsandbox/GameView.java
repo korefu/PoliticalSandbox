@@ -132,8 +132,10 @@ public class GameView extends View {
                     final float dx = x - mLastTouchX; // change in X
                     final float dy = y - mLastTouchY; // change in Y
 
-                    mPosX += dx;
-                    mPosY += dy;
+                    if (dx < 1000)
+                        mPosX += dx;
+                    if (dy < 1000)
+                        mPosY += dy;
 
                     invalidate();
                 }
@@ -283,11 +285,11 @@ public class GameView extends View {
 
         @Override
         public boolean onSingleTapUp(MotionEvent e) {
-            Toast.makeText(activity, "onTouch " + e.getX() + " " + e.getY(), Toast.LENGTH_SHORT).show();
+        //    Toast.makeText(activity, "onTouch " + e.getX() + " " + e.getY(), Toast.LENGTH_SHORT).show();
             Province province = findProvinceByTouch();
             if (province != null && province.getType() != Province.Type.VOID && !activity.AITurn) {
                 selectedProvince = province;
-                Log.d("myLog", selectedProvince.getArmies().toString());
+                //      Log.d("myLog", selectedProvince.getArmies().toString());
                 if (activity.newGame) {
                     activity.getSharedPreferences("save", Context.MODE_PRIVATE).edit().putInt("player_id", province.getOwner().getId()).apply();
                     activity.currentTurn(province.getOwner());
