@@ -61,6 +61,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
         setViews(savedInstanceState);
         gameView = new GameView(this, game);
         map.addView(gameView);
+        game.getCurrentPlayer().nextTurn();
         currentTurn(game.getCurrentPlayer());
     }
 
@@ -201,7 +202,6 @@ public class GameActivity extends Activity implements View.OnClickListener {
                 }
             }
         }.
-
                 execute();
     }
 

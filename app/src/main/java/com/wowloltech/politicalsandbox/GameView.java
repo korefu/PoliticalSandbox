@@ -103,7 +103,6 @@ public class GameView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
         canvas.save();
         canvas.scale(mScaleFactor, mScaleFactor);
         canvas.drawColor(Color.WHITE);
@@ -147,10 +146,18 @@ public class GameView extends View {
 
     private void drawPathByProvince(Canvas canvas, Province province) {
         if (province.getType() != Province.Type.VOID) {
-            for (Player p : game.getPlayers())
-                for (Army a : p.getArmies())
-                    if (a.getLocation().getId() == province.getId())
-                        name.append(a.getStrength() + " ");
+            name.append(province.getIncome());
+            name.append(' ');
+            try {
+                for (Player p : game.getPlayers())
+                    for (Army a : p.getArmies())
+                        if (a.getLocation().getId() == province.getId()) {
+                            name.append(a.getStrength());
+                            name.append(' ');
+                        }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             if (!province.getSelected())
                 p.setColor(province.getOwner().getColor());
             else
@@ -159,15 +166,18 @@ public class GameView extends View {
             if (province.getY() % 2 == 1) {
                 provincePath.offset((float) (size * Math.sqrt(3) * province.getX() + size * Math.sqrt(3) * 0.5), (float) (size * 1.5 * province.getY()));
                 canvas.drawPath(provincePath, p);
-                canvas.drawText(name.toString(), (float) (size * Math.sqrt(3) * province.getX() + size * Math.sqrt(3)), (float) (pText.getTextSize() / 2 + size + size * 1.5 * province.getY()), pText);
-
+                if (mScaleFactor > 0.5f) {
+                    canvas.drawPath(provincePath, pBlack);
+                    canvas.drawText(name.toString(), (float) (size * Math.sqrt(3) * province.getX() + size * Math.sqrt(3)), (float) (pText.getTextSize() / 2 + size + size * 1.5 * province.getY()), pText);
+                }
             } else {
                 provincePath.offset((float) (size * Math.sqrt(3) * province.getX()), (float) (size * 1.5 * province.getY()));
                 canvas.drawPath(provincePath, p);
-                canvas.drawText(name.toString(), (float) (size * Math.sqrt(3) * province.getX() + size * Math.sqrt(3) * 0.5), (float) (size + pText.getTextSize() / 2 + size * 1.5 * province.getY()), pText);
+                if (mScaleFactor > 0.5f) {
+                    canvas.drawPath(provincePath, pBlack);
+                    canvas.drawText(name.toString(), (float) (size * Math.sqrt(3) * province.getX() + size * Math.sqrt(3) * 0.5), (float) (size + pText.getTextSize() / 2 + size * 1.5 * province.getY()), pText);
+                }
             }
-            if (mScaleFactor > 0.5f)
-                canvas.drawPath(provincePath, pBlack);
 
             provincePath.offset(-(float) (size * Math.sqrt(3) * province.getX()), -(float) (size * 1.5 * province.getY()));
             if (province.getY() % 2 == 1) {
@@ -228,7 +238,7 @@ public class GameView extends View {
                         movingArmy.getOwner().moveArmy(movingArmy, selectedProvince);
                     else {
                         longPress = false;
-                        movingArmy.setSpeed(movingArmy.getSpeed()+1);
+                        movingArmy.setSpeed(movingArmy.getSpeed() + 1);
                     }
                     activity.movingArmy(movingArmy);
                 } else {

@@ -134,7 +134,7 @@ public abstract class Player {
 
     @Override
     public String toString() {
-        return name + ", игрок № " + getId() ;
+        return name + ", игрок № " + getId();
     }
 
     public double getMoneyIncome() {
@@ -198,17 +198,7 @@ public abstract class Player {
         army.getLocation().getArmies().remove(army);
         army.setLocation(province);
         province.getArmies().add(army);
-        try {
-            updateScreen();
-        } catch (Exception e) {
-            Log.e("myLog", "oops");
-            throw  e;
-        }
-        try {
-            Thread.sleep(20);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        updateScreen();
     }
 
     public void attackProvince(Army army, Province province) {
@@ -237,11 +227,11 @@ public abstract class Player {
             army.getOwner().getProvinces().add(province);
             province.setOwner(army.getOwner());
         }
+        updateScreen();
         try {
-            updateScreen();
-        } catch (Exception e) {
-            Log.e("myLog", "oops");
-            throw  e;
+            Thread.sleep(15);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
@@ -286,10 +276,13 @@ public abstract class Player {
                 }
             }
         }
-        try {
-            Thread.sleep(5);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    }
+
+    @Override
+    public boolean equals( Object obj) {
+        if (this == obj) return true;
+        if (obj == null || obj.getClass() != this.getClass()) return false;
+        Player p = (Player) obj;
+        return p.getId() == getId();
     }
 }
