@@ -16,6 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.DecimalFormat;
+import java.util.LinkedList;
+import java.util.List;
 
 public class GameActivity extends Activity implements View.OnClickListener {
 
@@ -37,10 +39,12 @@ public class GameActivity extends Activity implements View.OnClickListener {
     TextView textRecruits;
     RelativeLayout map;
     SharedPreferences sPref;
-    private int color;
+    boolean newGame = true;
+    boolean AITurn = false;
     private boolean isMenuHidden = true;
     private Game game;
     AsyncTask gameThread;
+    Button button;
 
     public Game getGame() {
         return game;
@@ -49,19 +53,21 @@ public class GameActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        try {
-            while (!Tools.isSaved)
-                Thread.sleep(5);
-        } catch (InterruptedException e) {
-        }
+
         sPref = getSharedPreferences("save", MODE_PRIVATE);
         setContentView(R.layout.activity_game);
         game = new Game(this);
         game.startGame(sPref.getString("map_database", "testmap.db"), sPref.getString("save_database", "testsave.db"));
         setViews(savedInstanceState);
+        button = findViewById(R.id.btn_nextTurn);
         gameView = new GameView(this, game);
         map.addView(gameView);
-        game.getCurrentPlayer().nextTurn();
+        button.setEnabled(false);
+        if (game.getCurrentPlayer() != null) {
+            button.setText(R.string.next_turn);
+            newGame = false;
+            button.setEnabled(true);
+        }
         currentTurn(game.getCurrentPlayer());
     }
 
@@ -86,21 +92,43 @@ public class GameActivity extends Activity implements View.OnClickListener {
 
 
     public void currentTurn(Player p) {
-        textPlayer.setText(p.toString());
-        textMoney.setText("Казна: " + new DecimalFormat("#0.00").format(p.getMoney()) + "(" + new DecimalFormat("#0.00").format(p.getMoneyIncome()) + ")");
-        textRecruits.setText("Рекруты: " + p.getRecruits() + "(" + p.getRecruitsIncome() + ")");
-        textTurn.setText("Ход: " + game.getTurnCounter());
+        if (p != null) {
+            textPlayer.setText(p.toString());
+            textMoney.setText("Казна: " + new DecimalFormat("#0.00").format(p.getMoney()) + "(" + new DecimalFormat("#0.00").format(p.getMoneyIncome()) + ")");
+            textRecruits.setText("Рекруты: " + p.getRecruits() + "(" + p.getRecruitsIncome() + ")");
+            textTurn.setText("Ход: " + game.getTurnCounter());
+        }
     }
 
 
     @Override
     public void onClick(View view) {
         if (!gameView.isArmyMoving()) {
-            switch (view.getId()) {
-                case R.id.btn_nextTurn:
-                    nextTurn();
-                    break;
+            if (view.getId() == R.id.btn_nextTurn) {
+                if (!newGame) nextTurn();
+                else {
+                    List<Player> players = new LinkedList<>();
+                    for (int i = 0; i < game.getPlayers().size(); i++) {
+                        Player player = game.getPlayers().get(i);
+                        if (gameView.getSelectedProvince().getOwner() == player)
+                            players.add(new HumanPlayer(player.getId(), player.getMoney(), player.getRecruits(), player.getColor(),
+                                    player.getName(), player.getProvinces(), player.getArmies()));
+                        else
+                            players.add(new AIPlayer(player.getId(), player.getMoney(), player.getRecruits(), player.getColor(),
+                                    player.getName(), player.getProvinces(), player.getArmies()));
+                    }
+                    game.getPlayers().clear();
+                    game.getPlayers().addAll(players);
+                    game.setCurrentPlayer(game.findPlayerByID(sPref.getInt("player_id", 0)));
+                    sPref.edit().remove("player_id").apply();
+                    button.setText(R.string.next_turn);
+                    newGame = false;
+                    game.getCurrentPlayer().nextTurn();
+                    if (sPref.getString("new_or_load", "load").equals("new"))
+                        currentTurn(game.getCurrentPlayer());
+                }
             }
+
         }
     }
 
@@ -175,11 +203,12 @@ public class GameActivity extends Activity implements View.OnClickListener {
             protected void onPreExecute() {
                 super.onPreExecute();
                 nextTurn.setEnabled(false);
+                AITurn = true;
             }
 
             @Override
             protected Void doInBackground(Void... params) {
-                HumanPlayer humanPlayer = (HumanPlayer) game.nextTurn();
+                HumanPlayer humanPlayer = (HumanPlayer) game.nextTurn(game.getCurrentPlayer().getId() + 1);
                 game.setCurrentPlayer(humanPlayer);
                 return null;
             }
@@ -189,15 +218,14 @@ public class GameActivity extends Activity implements View.OnClickListener {
                 super.onPostExecute(result);
                 if (game.getCurrentPlayer() != null) {
                     nextTurn.setEnabled(true);
-                    if (game.getCurrentPlayer() != null) {
-                        currentTurn(game.getCurrentPlayer());
-                    }
+                    currentTurn(game.getCurrentPlayer());
                     updateScreen();
+                    AITurn = false;
                 } else {
                     Tools.dbHelper.getDb().close();
                     Log.d("myLog", Tools.dbHelper.getDatabaseName());
                     deleteDatabase(Tools.dbHelper.getDatabaseName());
-                    getSharedPreferences("save", Activity.MODE_PRIVATE).edit().putString("save_database", "null").commit();
+                    sPref.edit().putString("save_database", "null").commit();
                     GameActivity.this.finish();
                 }
             }
@@ -206,13 +234,13 @@ public class GameActivity extends Activity implements View.OnClickListener {
     }
 
     public void setViews(Bundle b) {
-        textMoney = (TextView) findViewById(R.id.text_money);
-        textPlayer = (TextView) findViewById(R.id.text_player);
-        textTurn = (TextView) findViewById(R.id.text_turn);
-        textRecruits = (TextView) findViewById(R.id.text_recruits);
-        nextTurn = (Button) findViewById(R.id.btn_nextTurn);
+        textMoney = findViewById(R.id.text_money);
+        textPlayer = findViewById(R.id.text_player);
+        textTurn = findViewById(R.id.text_turn);
+        textRecruits = findViewById(R.id.text_recruits);
+        nextTurn = findViewById(R.id.btn_nextTurn);
         nextTurn.setOnClickListener(this);
-        map = (RelativeLayout) findViewById(R.id.map);
+        map = findViewById(R.id.map);
         provinceInfoDialog = new ProvinceInfoDialog();
         provinceInfoDialog.setActivity(this);
         provinceDivideArmyDialog = new ProvinceSelectArmyDialog();
@@ -237,14 +265,9 @@ public class GameActivity extends Activity implements View.OnClickListener {
         android.app.FragmentTransaction fTrans = getFragmentManager().beginTransaction();
         if (isMenuHidden) {
             fTrans.add(R.id.layout_game, menuFragment).commit();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                color = getWindow().getStatusBarColor();
-                // getWindow().setStatusBarColor(color - 0x222222);
-            }
             isMenuHidden = !isMenuHidden;
         } else {
             fTrans.remove(menuFragment).commit();
-            //  getWindow().setStatusBarColor(color);
             isMenuHidden = !isMenuHidden;
         }
 

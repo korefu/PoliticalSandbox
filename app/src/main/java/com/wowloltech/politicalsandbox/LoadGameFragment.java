@@ -61,6 +61,7 @@ public class LoadGameFragment extends Fragment implements View.OnClickListener {
                 MainActivity.rewrite = false;
                 if (selectedSave != null) {
                     getActivity().getSharedPreferences("save", Activity.MODE_PRIVATE).edit().putString("save_database", selectedSave+".db").commit();
+                    getActivity().getSharedPreferences("save", Activity.MODE_PRIVATE).edit().putString("new_or_load", "load").apply();
                     isStarting = false;
                     selectedSave = null;
                     startActivity(new Intent(getActivity().getApplicationContext(), GameActivity.class));

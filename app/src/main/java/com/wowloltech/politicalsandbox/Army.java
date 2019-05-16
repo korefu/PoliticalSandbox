@@ -77,6 +77,10 @@ public class Army {
         return owner;
     }
 
+    public void setOwner(Player owner) {
+        this.owner = owner;
+    }
+
     @Override
     public String toString() {
         return "Численность: " + strength + "\n";

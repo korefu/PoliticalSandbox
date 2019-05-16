@@ -1,6 +1,7 @@
 package com.wowloltech.politicalsandbox;
 
 
+import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -212,7 +213,7 @@ public class GameView extends View {
             super.onLongPress(e);
             Province province = findProvinceByTouch(e.getX(), e.getY());
             if (province != null && province.getType() != Province.Type.VOID && province.getOwner() == game.getCurrentPlayer()
-                    && !isArmyMoving && province.getArmies().size() > 0) {
+                    && !isArmyMoving && province.getArmies().size() > 0 && selectedProvince != null && !activity.AITurn) {
                 selectedProvince = province;
                 province.getOwner().combineArmy(province);
                 activity.movingArmy(province.getArmies().get(0));
@@ -226,9 +227,16 @@ public class GameView extends View {
         public boolean onSingleTapUp(MotionEvent e) {
             //Toast.makeText(MainActivity.this,"onTouch " + e.getX() + " " + e.getY(),Toast.LENGTH_SHORT).show();
             Province province = findProvinceByTouch(e.getX(), e.getY());
-            if (province != null && province.getType() != Province.Type.VOID) {
+            if (province != null && province.getType() != Province.Type.VOID && !activity.AITurn) {
                 selectedProvince = province;
                 Log.d("myLog", selectedProvince.getArmies().toString());
+                if (activity.newGame) {
+                    activity.getSharedPreferences("save", Context.MODE_PRIVATE).edit().putInt("player_id", province.getOwner().getId()).apply();
+                    activity.currentTurn(province.getOwner());
+                    activity.button.setEnabled(true);
+                    invalidate();
+                    return true;
+                }
                 if (!isArmyMoving())
                     activity.openContextMenu(activity.map);
                 else if (selectedProvince.getSelected()) {

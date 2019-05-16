@@ -1,6 +1,8 @@
 package com.wowloltech.politicalsandbox;
 
+import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -36,29 +38,27 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        if (Tools.isSaved)
-            switch (view.getId()) {
-                case R.id.btn_new_game:
-                    getFragmentManager().beginTransaction()
-                            .addToBackStack(null)
-                            .replace(R.id.main_frame, newGameFragment)
-                            .commit();
-                    break;
-                case R.id.btn_continue:
-                    if (getActivity().getSharedPreferences("save", MODE_PRIVATE).getString("save_database", "null").equals("null"))
-                        Toast.makeText(getActivity(), "Последней сохраненной игры не существует", Toast.LENGTH_SHORT).show();
-                    else {
-                        MainActivity.rewrite = false;
-                        startActivity(new Intent(getActivity().getApplicationContext(), GameActivity.class));
-                    }
-                    break;
-                case R.id.btn_load_game:
-                    getFragmentManager().beginTransaction()
-                            .addToBackStack(null)
-                            .replace(R.id.main_frame, loadGameFragment)
-                            .commit();
-            }
-        else
-            Toast.makeText(getActivity(), "Игра сохраняется...", Toast.LENGTH_SHORT).show();
+        switch (view.getId()) {
+            case R.id.btn_new_game:
+                getFragmentManager().beginTransaction()
+                        .addToBackStack(null)
+                        .replace(R.id.main_frame, newGameFragment)
+                        .commit();
+                break;
+            case R.id.btn_continue:
+                if (getActivity().getSharedPreferences("save", MODE_PRIVATE).getString("save_database", "null").equals("null"))
+                    Toast.makeText(getActivity(), "Последней сохраненной игры не существует", Toast.LENGTH_SHORT).show();
+                else {
+                    getActivity().getSharedPreferences("save", Activity.MODE_PRIVATE).edit().putString("new_or_load", "load").apply();
+                    MainActivity.rewrite = false;
+                    startActivity(new Intent(getActivity().getApplicationContext(), GameActivity.class));
+                }
+                break;
+            case R.id.btn_load_game:
+                getFragmentManager().beginTransaction()
+                        .addToBackStack(null)
+                        .replace(R.id.main_frame, loadGameFragment)
+                        .commit();
+        }
     }
 }

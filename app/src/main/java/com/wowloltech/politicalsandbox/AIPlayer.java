@@ -9,15 +9,17 @@ public class AIPlayer extends Player {
         super(id, money, recruits, color, name);
         this.setIsHuman(false);
     }
-
-    @Override
-    boolean acceptAlliance(Event e) {
-        return false;
-    }
-
-    @Override
-    boolean acceptPeace(Event e) {
-        return false;
+    public AIPlayer(int id, double money, int recruits, int color, String name, List<Province> provinces, List<Army> armies) {
+        super(id, money, recruits, color, name);
+        this.setIsHuman(false);
+        for (Province p: provinces) {
+            getProvinces().add(p);
+            p.setOwner(this);
+        }
+        for (Army a: armies) {
+            getArmies().add(a);
+            a.setOwner(this);
+        }
     }
 
     @Override

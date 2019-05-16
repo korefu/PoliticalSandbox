@@ -10,11 +10,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-public abstract class Player {
+public class Player {
     private int id;
     private List<Province> provinces;
     private List<Player> wars;
-    private List<Event> events;
     private List<Army> armies;
     private double money;
     private int color;
@@ -29,8 +28,6 @@ public abstract class Player {
     public Player(int id) {
         this.id = id;
         provinces = new ArrayList<>();
-        wars = new LinkedList<>();
-        events = new LinkedList<>();
         armies = new ArrayList<>();
         this.money = 0;
         this.recruits = 1000;
@@ -45,7 +42,6 @@ public abstract class Player {
         armies = new ArrayList<>();
         provinces = new ArrayList<>();
         wars = new LinkedList<>();
-        events = new LinkedList<>();
     }
 
 
@@ -79,14 +75,6 @@ public abstract class Player {
 
     public void setWars(List<Player> wars) {
         this.wars = wars;
-    }
-
-    public List<Event> getEvents() {
-        return events;
-    }
-
-    public void setEvents(List<Event> events) {
-        this.events = events;
     }
 
     public List<Army> getArmies() {
@@ -160,10 +148,6 @@ public abstract class Player {
         Tools.setIdCounter(Tools.getIdCounter() + 2);
         Army.remove(parentArmy);
     }
-
-    abstract boolean acceptAlliance(Event e);
-
-    abstract boolean acceptPeace(Event e);
 
     public void pickMilitary(int strength, Province province) {
         Army army = new Army(strength, province, this, Tools.getIdCounter());

@@ -26,18 +26,14 @@ public class Game {
         return activity;
     }
 
-//    public void setCurrentPlayerFromDb(HumanPlayer get) {
-//        this.currentPlayer = get;
-//    }
-
     public Player addPlayerFromDb(int id, double money, int recruits, int isHuman, int color, String name) {
-        if (isHuman==1) {
+        if (isHuman == 1) {
             HumanPlayer humanPlayer = new HumanPlayer(id, money, recruits, color, name);
             setCurrentPlayer(humanPlayer);
             return humanPlayer;
-        }
-        else
+        } else if (isHuman == 0)
             return new AIPlayer(id, money, recruits, color, name);
+        else return new Player(id, money, recruits, color, name);
     }
 
     public void setTurnCounterFromDb(int turnCounter) {
@@ -52,7 +48,7 @@ public class Game {
         return currentPlayer;
     }
 
-    public void setCurrentPlayer(HumanPlayer currentPlayer) {
+    public void setCurrentPlayer(Player currentPlayer) {
         this.currentPlayer = currentPlayer;
         if (currentPlayer != null) {
             ContentValues cv = new ContentValues();
@@ -76,11 +72,7 @@ public class Game {
         return players;
     }
 
-    public Player nextTurn() {
-        int i = 0;
-        for (int k = 0; k < players.size(); k++)
-            if (players.get(k).getId() == currentPlayer.getId())
-                i = k + 1;
+    public Player nextTurn(int i) {
         while (true) {
             i %= players.size();
             if (i == 0) {
@@ -92,6 +84,7 @@ public class Game {
             }
 
             for (; i < players.size(); i++) {
+                if (currentPlayer != null)
                 if (players.size() == 1) {
                     return null;
                 }
@@ -134,7 +127,7 @@ public class Game {
     }
 
     public void removePlayer(int playerId) {
-        Tools.dbHelper.getDb().delete("players", "_id = ?", new String[]{String.valueOf(playerId+1)});
+        Tools.dbHelper.getDb().delete("players", "_id = ?", new String[]{String.valueOf(playerId + 1)});
         for (int i = 0; i < players.size(); i++)
             if (players.get(i).getId() == playerId) {
                 players.remove(i);

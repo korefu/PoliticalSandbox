@@ -5,26 +5,33 @@
                 android:background="@color/transparent_black"
                 android:onClick="onClick">
 
-    <LinearLayout
-        android:orientation="vertical"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true">
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:orientation="vertical">
 
         <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/resume_to_game"
             android:id="@+id/button_resume"
-            android:layout_marginLeft="100dp"
-            android:layout_marginRight="100dp"/>
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/resume_to_game" />
 
         <Button
-            android:layout_width="match_parent"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:text="@string/exit"
+            android:layout_centerInParent="true"
+            android:id="@+id/menu_btn_save"
+            android:layout_below="@id/button_resume"
+            android:text="@string/save_game"/>
+
+        <Button
             android:id="@+id/button_exit"
-            android:layout_marginLeft="100dp"
-            android:layout_marginRight="100dp"/>
-    </LinearLayout>
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_below="@id/menu_btn_save"
+            android:text="@string/exit" />
+    </RelativeLayout>
 </RelativeLayout>
