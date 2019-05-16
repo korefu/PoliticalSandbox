@@ -130,7 +130,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         game.setTurnCounterFromDb(c.getInt(turnCounterColIndex));
         Map.setWidth(c.getInt(widthColIndex));
         Map.setHeight(c.getInt(heightColIndex));
-        Map.setProvinces(new Province[Map.getWidth()][Map.getHeight()]);
+        Map.setProvinces(new Province[Map.getHeight()][Map.getWidth()]);
+        Log.d("myLog", ""+Map.getWidth()+" "+Map.getHeight()+ " " + Map.getProvinces().length + " " + Map.getProvinces()[0].length);
         int currentPlayerId = c.getInt(currentPlayerColIndex);
         c.close();
         c = mDataBase.query("players", null, null, null, null, null, null);
@@ -141,9 +142,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             int isHumanColIndex = c.getColumnIndex("is_human");
             int idColIndex = c.getColumnIndex("_id");
             int colorColIndex = c.getColumnIndex("color");
+            int nameColIndex = c.getColumnIndex("name");
             do {
                 int id = c.getInt(idColIndex) - 1;
                 int recruits = c.getInt(recruitsColIndex);
+                String name = c.getString(nameColIndex);
                 double money = c.getDouble(moneyColIndex);
                 int color = c.getInt(colorColIndex);
                 int isHuman = 0;
@@ -151,7 +154,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     isHuman = c.getInt(isHumanColIndex);
                 else if (id == player_id) isHuman = 1;
                 else isHuman = 0;
-                game.getPlayers().add(game.addPlayerFromDb(id, money, recruits, isHuman, color));
+                game.getPlayers().add(game.addPlayerFromDb(id, money, recruits, isHuman, color, name));
             } while (c.moveToNext());
         }
         game.getActivity().getSharedPreferences("save", Context.MODE_PRIVATE).edit().putInt("player_id", -1).apply();
@@ -171,11 +174,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     int ownerID = c.getInt(ownerColIndex);
 
                     Log.d(LOG_TAG, "_id = " + id + ", income = " + income + ", owner = " + ownerID);
-                    Map.getProvinces()[id / Map.getHeight()][id % Map.getWidth()] = new Province(id % Map.getWidth(), id / Map.getHeight(), id, (int) income * 20, income, game.findPlayerByID(ownerID), type);
-                    game.findPlayerByID(ownerID).getProvinces().add(Map.getProvinces()[id / Map.getHeight()][id % Map.getWidth()]);
+                    Map.getProvinces()[id / Map.getWidth()][id % Map.getWidth()] = new Province(id % Map.getWidth(), id / Map.getWidth(), id, (int) income * 20, income, game.findPlayerByID(ownerID), type);
+                    game.findPlayerByID(ownerID).getProvinces().add(Map.getProvinces()[id / Map.getWidth()][id % Map.getWidth()]);
                 } else {
                     int id = c.getInt(idColIndex) - 1;
-                    Map.getProvinces()[id / Map.getHeight()][id % Map.getWidth()] = new Province(id % Map.getWidth(), id / Map.getHeight(), id);
+                    Map.getProvinces()[id / Map.getWidth()][id % Map.getWidth()] = new Province(id % Map.getWidth(), id / Map.getWidth(), id);
                 }
             } while (c.moveToNext());
         }

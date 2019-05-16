@@ -20,6 +20,11 @@ public abstract class Player {
     private int color;
     private int recruits;
     private boolean isHuman;
+    private String name;
+
+    public String getName() {
+        return name;
+    }
 
     public Player(int id) {
         this.id = id;
@@ -31,10 +36,11 @@ public abstract class Player {
         this.recruits = 1000;
     }
 
-    public Player(int id, double money, int recruits, int color) {
+    public Player(int id, double money, int recruits, int color, String name) {
         this.id = id;
         this.money = money;
         this.recruits = recruits;
+        this.name = name;
         this.color = color;
         armies = new ArrayList<>();
         provinces = new ArrayList<>();
@@ -128,9 +134,7 @@ public abstract class Player {
 
     @Override
     public String toString() {
-        return "Player{" +
-                "id=" + id +
-                '}';
+        return name + ", игрок № " + getId() ;
     }
 
     public double getMoneyIncome() {
@@ -189,13 +193,29 @@ public abstract class Player {
 
     }
 
+    public void moveArmy(Army army, Province province) {
+        army.setSpeed(army.getSpeed() - 1);
+        army.getLocation().getArmies().remove(army);
+        army.setLocation(province);
+        province.getArmies().add(army);
+        try {
+            updateScreen();
+        } catch (Exception e) {
+            Log.e("myLog", "oops");
+            throw  e;
+        }
+        try {
+            Thread.sleep(20);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void attackProvince(Army army, Province province) {
         if (province.getOwner() != army.getOwner()) {
             Iterator<Army> i = province.getArmies().iterator();
             while (i.hasNext()) {
                 Army a = i.next();
-//            Log.d("myLog", "" + army.getLocation().getX() + " " + army.getLocation().getY() + " " + army.getOwner() + " "
-//            + army.getStrength() + "\n" + province.getX() + " " + province.getY());
                 if (province.getOwner() != army.getOwner()) {
                     if (a.getStrength() > army.getStrength()) {
                         a.setStrength(a.getStrength() - army.getStrength());
@@ -217,20 +237,11 @@ public abstract class Player {
             army.getOwner().getProvinces().add(province);
             province.setOwner(army.getOwner());
         }
-        army.setSpeed(army.getSpeed() - 1);
-        army.getLocation().getArmies().remove(army);
-        army.setLocation(province);
-        province.getArmies().add(army);
         try {
             updateScreen();
         } catch (Exception e) {
             Log.e("myLog", "oops");
             throw  e;
-        }
-        try {
-            Thread.sleep(50);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
     }
 

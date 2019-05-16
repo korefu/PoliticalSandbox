@@ -1,13 +1,12 @@
 package com.wowloltech.politicalsandbox;
 
-import android.util.Log;
 import java.util.LinkedList;
 import java.util.List;
 
 public class AIPlayer extends Player {
 
-    public AIPlayer(int id, double money, int recruits, int color) {
-        super(id, money, recruits, color);
+    public AIPlayer(int id, double money, int recruits, int color, String name) {
+        super(id, money, recruits, color, name);
         this.setIsHuman(false);
     }
 
@@ -47,10 +46,8 @@ public class AIPlayer extends Player {
                         if (enemy.getLocation() == p) sum += enemy.getStrength();
                     }
                     if (a.getStrength()-sum>=50 && a.getSpeed()>0) {
-//                        Log.d("myLog1", " sum " + sum + " " + a.getStrength() + " army loc xy " + a.getLocation().getX()+a.getLocation().getY() +
-//                                " prov xy " + p.getX()+p.getY() +
-//                                " prov owner " + p.getOwner() + " army owner " + a.getOwner() + "ID " + a.getId());
                         attackProvince(a, p);
+                        moveArmy(a, p);
                     }
                 }
             }
@@ -82,8 +79,4 @@ public class AIPlayer extends Player {
         }
     }
 
-    @Override
-    public String toString() {
-        return "ИИ, №" + this.getId();
-    }
 }

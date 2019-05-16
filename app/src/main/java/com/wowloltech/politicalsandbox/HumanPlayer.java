@@ -8,8 +8,8 @@ public class HumanPlayer extends Player {
         setIsHuman(true);
     }
 
-    public HumanPlayer(int id, double money, int recruits, int color) {
-        super(id, money, recruits, color);
+    public HumanPlayer(int id, double money, int recruits, int color, String name) {
+        super(id, money, recruits, color, name);
         this.setIsHuman(true);
     }
 
@@ -28,8 +28,4 @@ public class HumanPlayer extends Player {
        super.nextTurn();
     }
 
-    @Override
-    public String toString() {
-        return "Человек, №" + this.getId();
-    }
 }

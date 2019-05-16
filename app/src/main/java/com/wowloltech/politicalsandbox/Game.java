@@ -30,14 +30,14 @@ public class Game {
 //        this.currentPlayer = get;
 //    }
 
-    public Player addPlayerFromDb(int id, double money, int recruits, int isHuman, int color) {
+    public Player addPlayerFromDb(int id, double money, int recruits, int isHuman, int color, String name) {
         if (isHuman==1) {
-            HumanPlayer humanPlayer = new HumanPlayer(id, money, recruits, color);
+            HumanPlayer humanPlayer = new HumanPlayer(id, money, recruits, color, name);
             setCurrentPlayer(humanPlayer);
             return humanPlayer;
         }
         else
-            return new AIPlayer(id, money, recruits, color);
+            return new AIPlayer(id, money, recruits, color, name);
     }
 
     public void setTurnCounterFromDb(int turnCounter) {

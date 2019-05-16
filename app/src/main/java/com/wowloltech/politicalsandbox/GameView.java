@@ -30,6 +30,7 @@ public class GameView extends View {
     private int selectedX;
     private int selectedY;
     private boolean isArmyMoving = false;
+    private boolean longPress = false;
     private Army movingArmy = null;
     private GestureDetector gestureDetector;
     private ScaleGestureDetector mScaleDetector;
@@ -146,11 +147,10 @@ public class GameView extends View {
 
     private void drawPathByProvince(Canvas canvas, Province province) {
         if (province.getType() != Province.Type.VOID) {
-            name.append(province.getIncome());
             for (Player p : game.getPlayers())
                 for (Army a : p.getArmies())
                     if (a.getLocation().getId() == province.getId())
-                        name.append(" " + a.getStrength());
+                        name.append(a.getStrength() + " ");
             if (!province.getSelected())
                 p.setColor(province.getOwner().getColor());
             else
@@ -202,10 +202,11 @@ public class GameView extends View {
             super.onLongPress(e);
             Province province = findProvinceByTouch(e.getX(), e.getY());
             if (province != null && province.getType() != Province.Type.VOID && province.getOwner() == game.getCurrentPlayer()
-                    && !isArmyMoving && province.getArmies().size()>0) {
+                    && !isArmyMoving && province.getArmies().size() > 0) {
                 selectedProvince = province;
                 province.getOwner().combineArmy(province);
                 activity.movingArmy(province.getArmies().get(0));
+                longPress = true;
                 invalidate();
             }
             invalidate();
@@ -221,7 +222,14 @@ public class GameView extends View {
                 if (!isArmyMoving())
                     activity.openContextMenu(activity.map);
                 else if (selectedProvince.getSelected()) {
+                    boolean isEnemy = movingArmy.getOwner() == selectedProvince.getOwner();
                     movingArmy.getOwner().attackProvince(movingArmy, selectedProvince);
+                    if (!longPress || isEnemy)
+                        movingArmy.getOwner().moveArmy(movingArmy, selectedProvince);
+                    else {
+                        longPress = false;
+                        movingArmy.setSpeed(movingArmy.getSpeed()+1);
+                    }
                     activity.movingArmy(movingArmy);
                 } else {
                     movingArmy.setSpeed(2);
