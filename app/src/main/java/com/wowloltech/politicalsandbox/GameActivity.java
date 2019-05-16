@@ -85,7 +85,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
 
 
     public void currentTurn(Player p) {
-        textPlayer.setText("Игрок: " + p);
+        textPlayer.setText(p.toString());
         textMoney.setText("Казна: " + new DecimalFormat("#0.00").format(p.getMoney()) + "(" + new DecimalFormat("#0.00").format(p.getMoneyIncome()) + ")");
         textRecruits.setText("Рекруты: " + p.getRecruits() + "(" + p.getRecruitsIncome() + ")");
         textTurn.setText("Ход: " + game.getTurnCounter());
