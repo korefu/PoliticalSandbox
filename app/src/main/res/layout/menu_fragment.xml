@@ -16,14 +16,14 @@
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="@string/resume_to_game" />
+            android:text="@string/resume_to_game"
+            android:layout_above="@id/menu_btn_save"/>
 
         <Button
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:id="@+id/menu_btn_save"
-            android:layout_below="@id/button_resume"
             android:text="@string/save_game"/>
 
         <Button
