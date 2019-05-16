@@ -72,7 +72,11 @@ public class Game {
         return players;
     }
 
-    public Player nextTurn(int i) {
+    public Player nextTurn() {
+        int i = 0;
+        for (int k = 0; k < players.size(); k++)
+            if (players.get(k).getId() == currentPlayer.getId())
+                i = k + 1;
         while (true) {
             i %= players.size();
             if (i == 0) {
@@ -84,6 +88,7 @@ public class Game {
             }
 
             for (; i < players.size(); i++) {
+                Log.d("myLog", getPlayers().get(i).toString());
                 if (currentPlayer != null)
                 if (players.size() == 1) {
                     return null;

@@ -208,7 +208,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
 
             @Override
             protected Void doInBackground(Void... params) {
-                HumanPlayer humanPlayer = (HumanPlayer) game.nextTurn(game.getCurrentPlayer().getId() + 1);
+                HumanPlayer humanPlayer = (HumanPlayer) game.nextTurn();
                 game.setCurrentPlayer(humanPlayer);
                 return null;
             }
