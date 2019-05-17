@@ -61,19 +61,18 @@ public class GameView extends View {
         pBlack.setStrokeWidth(2);
         pBlack.setStyle(Paint.Style.STROKE);
         provincePath = new Path();
-        setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         createProvincePath(provincePath);
         mScaleDetector = new ScaleGestureDetector(activity, new ScaleListener());
         gestureDetector = new GestureDetector(activity, new MyGestureListener());
     }
 
     private void createProvincePath(Path provincePath) {
-        provincePath.moveTo((float) 0, (float) (size * 0.5));
-        provincePath.lineTo((float) (size * sqrt3 * 0.5), (float) (0));
-        provincePath.lineTo((float) (size * sqrt3), (float) (size * 0.5));
-        provincePath.lineTo((float) (size * sqrt3), (float) (size * 1.5));
-        provincePath.lineTo((float) (size * sqrt3 * 0.5), size * 2);
-        provincePath.lineTo((float) 0, (float) (size * 1.5));
+        provincePath.moveTo(0f, size * 0.5f);
+        provincePath.lineTo(size * sqrt3 * 0.5f, 0f);
+        provincePath.lineTo(size * sqrt3, size * 0.5f);
+        provincePath.lineTo(size * sqrt3, size * 1.5f);
+        provincePath.lineTo(size * sqrt3 * 0.5f, size * 2f);
+        provincePath.lineTo(0f, size * 1.5f);
         provincePath.close();
     }
 
