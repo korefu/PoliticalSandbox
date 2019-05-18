@@ -150,7 +150,7 @@ public class Player {
         setMoney(getMoney() - (double) strength / 50);
     }
 
-    public void combineArmy(Province selectedProvince) {
+    public void uniteArmy(Province selectedProvince) {
         int summaryArmy = 0;
         int summarySpeed = 10;
         //      Log.d("myLog", selectedProvince.getArmies().toString());

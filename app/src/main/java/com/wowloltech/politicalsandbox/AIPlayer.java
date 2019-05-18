@@ -1,7 +1,5 @@
 package com.wowloltech.politicalsandbox;
 
-import android.util.Log;
-
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -31,7 +29,6 @@ public class AIPlayer extends Player {
     public void nextTurn() {
         super.nextTurn();
         List<Province> borderProvinces = new LinkedList<>();
-        for (Province p : getProvinces()) combineArmy(p);
         for (Province p : getProvinces())
             for (Province n : p.getNeighbours())
                 if (n.getOwner() != p.getOwner()) {
@@ -102,8 +99,7 @@ public class AIPlayer extends Player {
 //                    }
 //            }
 //        }
-        for (
-                int i = 0; i < borderProvinces.size(); i++) {
+        for (int i = 0; i < borderProvinces.size(); i++) {
             //Log.d("myLog", toString()+" "+threats[i]+" "+"gthread "+gthreat+" "+recruitableArmy);
             int defense = 0;
             for (Army a : borderProvinces.get(i).getArmies())
@@ -112,6 +108,7 @@ public class AIPlayer extends Player {
                 pickMilitary((recruitableArmy / borderProvinces.size() - defense), borderProvinces.get(i));
 
         }
+        for (Province p : getProvinces()) uniteArmy(p);
     }
 
 }

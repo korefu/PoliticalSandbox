@@ -245,7 +245,7 @@ public class GameView extends View {
             if (province != null && province.getType() != Province.Type.VOID && province.getOwner() == game.getCurrentPlayer()
                     && !isArmyMoving && province.getArmies().size() > 0 && selectedProvince != null && !activity.AITurn) {
                 selectedProvince = province;
-                province.getOwner().combineArmy(province);
+                province.getOwner().uniteArmy(province);
                 activity.movingArmy(province.getArmies().get(0));
                 longPress = true;
                 invalidate();

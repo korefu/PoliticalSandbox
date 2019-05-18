@@ -4,7 +4,6 @@ package com.wowloltech.politicalsandbox;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -24,7 +23,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
     final int MENU_GET_PROVINCE_INFO = 1;
     final int MENU_RECRUIT = 2;
     final int MENU_MOVE_ARMY = 3;
-    final int MENU_COMBINE_ARMY = 4;
+    final int MENU_UNITE_ARMY = 4;
     final int MENU_DIVIDE_ARMY = 5;
     public GameView gameView;
     ProvinceInfoDialog provinceInfoDialog;
@@ -168,7 +167,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
         if (game.getCurrentPlayer().getId() == gameView.getSelectedProvince().getOwner().getId()) {
             menu.add(0, MENU_RECRUIT, 0, "Нанять войско");
             menu.add(0, MENU_MOVE_ARMY, 0, "Переместить войско");
-            menu.add(0, MENU_COMBINE_ARMY, 0, "Объединить войска");
+            menu.add(0, MENU_UNITE_ARMY, 0, "Объединить войска");
             menu.add(0, MENU_DIVIDE_ARMY, 0, "Разделить войско");
         }
     }
@@ -185,8 +184,8 @@ public class GameActivity extends Activity implements View.OnClickListener {
             case MENU_RECRUIT:
                 provincePickMilitaryDialog.show(getFragmentManager(), "provincePickMilitaryDialog");
                 break;
-            case MENU_COMBINE_ARMY:
-                game.getCurrentPlayer().combineArmy(gameView.getSelectedProvince());
+            case MENU_UNITE_ARMY:
+                game.getCurrentPlayer().uniteArmy(gameView.getSelectedProvince());
                 updateScreen();
                 break;
             case MENU_DIVIDE_ARMY:
