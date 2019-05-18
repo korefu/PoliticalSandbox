@@ -107,13 +107,6 @@ public class Player {
     public void setIsHuman(boolean isHuman) {
         this.isHuman = isHuman;
         ContentValues cv = new ContentValues();
-        if (isHuman) {
-            cv.put("is_human", 1);
-            Tools.dbHelper.getDb().update("players", cv, "_id = ?", new String[]{String.valueOf(getId() + 1)});
-        } else {
-            cv.put("is_human", 0);
-            Tools.dbHelper.getDb().update("players", cv, "_id = ?", new String[]{String.valueOf(getId() + 1)});
-        }
     }
 
     public boolean isHuman() {

@@ -121,7 +121,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         c.moveToFirst();
         int widthColIndex = c.getColumnIndex("map_width");
         int heightColIndex = c.getColumnIndex("map_height");
-        int currentPlayerColIndex = c.getColumnIndex("current_player");
         int idCounterColIndex = c.getColumnIndex("id_counter");
         int turnCounterColIndex = c.getColumnIndex("turn_counter");
 
@@ -132,14 +131,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Map.setHeight(c.getInt(heightColIndex));
         Map.setProvinces(new Province[Map.getHeight()][Map.getWidth()]);
         Log.d("myLog", ""+Map.getWidth()+" "+Map.getHeight()+ " " + Map.getProvinces().length + " " + Map.getProvinces()[0].length);
-        int currentPlayerId = c.getInt(currentPlayerColIndex);
         c.close();
         c = mDataBase.query("players", null, null, null, null, null, null);
 //        int player_id = game.getActivity().getSharedPreferences("save", Context.MODE_PRIVATE).getInt("player_id", -1);
         if (c.moveToFirst()) {
             int moneyColIndex = c.getColumnIndex("money");
             int recruitsColIndex = c.getColumnIndex("recruits");
-            int isHumanColIndex = c.getColumnIndex("is_human");
             int idColIndex = c.getColumnIndex("_id");
             int colorColIndex = c.getColumnIndex("color");
             int nameColIndex = c.getColumnIndex("name");

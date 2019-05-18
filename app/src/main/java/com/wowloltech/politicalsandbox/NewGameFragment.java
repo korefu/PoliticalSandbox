@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Switch;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ public class NewGameFragment extends Fragment implements View.OnClickListener {
     EditText editText;
     EditText playerId;
     RecyclerView recyclerView;
+    Switch ha;
     ArrayList<String> maps;
     String saveName;
     DataAdapter adapter;
@@ -33,6 +35,8 @@ public class NewGameFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.new_game_fragment, null);
         editText = v.findViewById(R.id.selected_database);
+        ha = v.findViewById(R.id.new_game_ha);
+        ha.setChecked(true);
         v.findViewById(R.id.btn_cancel).setOnClickListener(this);
         recyclerView = v.findViewById(R.id.newgame_recyclerView);
         try {
@@ -97,6 +101,7 @@ public class NewGameFragment extends Fragment implements View.OnClickListener {
         MainActivity.rewrite = true;
         getActivity().getSharedPreferences("save", Activity.MODE_PRIVATE).edit().putString("save_database", saveName).commit();
         getActivity().getSharedPreferences("save", Activity.MODE_PRIVATE).edit().putString("map_database", selectedSave + ".db").commit();
+        getActivity().getSharedPreferences("settings", Activity.MODE_PRIVATE).edit().putBoolean("ha", ha.isChecked()).commit();
         getActivity().getSharedPreferences("save", Activity.MODE_PRIVATE).edit().putString("new_or_load", "new").apply();
         startActivity(new Intent(getActivity().getApplicationContext(), GameActivity.class));
         isStarting = false;

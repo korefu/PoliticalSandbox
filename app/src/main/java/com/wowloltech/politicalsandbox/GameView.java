@@ -62,6 +62,10 @@ public class GameView extends View {
         pBlack.setStyle(Paint.Style.STROKE);
         provincePath = new Path();
         createProvincePath(provincePath);
+        if (activity.getSharedPreferences("settings", Context.MODE_PRIVATE).getBoolean("ha", false))
+            setLayerType(LAYER_TYPE_HARDWARE, null);
+        else
+            setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         mScaleDetector = new ScaleGestureDetector(activity, new ScaleListener());
         gestureDetector = new GestureDetector(activity, new MyGestureListener());
     }
@@ -227,8 +231,8 @@ public class GameView extends View {
 
             // Only move if the ScaleGestureDetector isn't processing a gesture.
             if (!mScaleDetector.isInProgress()) {
-                mPosX -= distanceX/mScaleFactor;
-                mPosY -= distanceY/mScaleFactor;
+                mPosX -= distanceX / mScaleFactor;
+                mPosY -= distanceY / mScaleFactor;
                 invalidate();
             }
             return true;
