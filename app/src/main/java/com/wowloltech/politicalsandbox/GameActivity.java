@@ -140,7 +140,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
     public void movingArmy(Army a) {
         if (!gameView.isArmyMoving()) {
             if (a.getSpeed() > 0) {
-                gameView.neighbours = Map.getNeighbours(a.getLocation());
+                gameView.neighbours = a.getLocation().getNeighbours();
                 for (int i = 0; i < gameView.neighbours.size(); i++) {
                     gameView.neighbours.get(i).setSelected(true);
                 }

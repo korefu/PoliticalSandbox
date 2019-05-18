@@ -16,6 +16,8 @@ public class Province {
     private boolean selected = false;
     private List<Army> armies;
     private  Type type;
+    private List<Province> neighbours;
+    private Integer numberOfFriendlyProvinces = 0;
 
     public Province(int x, int y, int id) {
         this.x = x;
@@ -26,6 +28,21 @@ public class Province {
         income = 0;
         recruits = 0;
         armies = null;
+        neighbours = null;
+    }
+
+    public Integer getNumberOfFriendlyProvinces() {
+        return numberOfFriendlyProvinces;
+    }
+    public void updateNumberOfFriendlyProvinces() {
+        numberOfFriendlyProvinces=0;
+        for (Province p: neighbours)
+            if (getOwner()==p.getOwner())
+                numberOfFriendlyProvinces++;
+    }
+
+    public List<Province> getNeighbours() {
+        return neighbours;
     }
 
     public Type getType() {
@@ -44,6 +61,7 @@ public class Province {
         this.income = income;
         this.owner = owner;
         armies = new LinkedList<>();
+        neighbours = new ArrayList<>();
         this.type = type;
     }
 

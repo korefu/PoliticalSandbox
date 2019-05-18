@@ -2,6 +2,7 @@ package com.wowloltech.politicalsandbox;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -36,7 +37,8 @@ public class NewGameFragment extends Fragment implements View.OnClickListener {
         View v = inflater.inflate(R.layout.new_game_fragment, null);
         editText = v.findViewById(R.id.selected_database);
         ha = v.findViewById(R.id.new_game_ha);
-        ha.setChecked(true);
+        boolean haMode = getActivity().getSharedPreferences("settings", Activity.MODE_PRIVATE).getBoolean("ha", true);
+        ha.setChecked(haMode);
         v.findViewById(R.id.btn_cancel).setOnClickListener(this);
         recyclerView = v.findViewById(R.id.newgame_recyclerView);
         try {

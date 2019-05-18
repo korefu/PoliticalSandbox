@@ -62,7 +62,7 @@ public class GameView extends View {
         pBlack.setStyle(Paint.Style.STROKE);
         provincePath = new Path();
         createProvincePath(provincePath);
-        if (activity.getSharedPreferences("settings", Context.MODE_PRIVATE).getBoolean("ha", false))
+        if (activity.getSharedPreferences("settings", Context.MODE_PRIVATE).getBoolean("ha", true))
             setLayerType(LAYER_TYPE_HARDWARE, null);
         else
             setLayerType(View.LAYER_TYPE_SOFTWARE, null);

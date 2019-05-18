@@ -12,6 +12,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Collections;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private String MAP_NAME = "testmap.db";
@@ -130,7 +131,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Map.setWidth(c.getInt(widthColIndex));
         Map.setHeight(c.getInt(heightColIndex));
         Map.setProvinces(new Province[Map.getHeight()][Map.getWidth()]);
-        Log.d("myLog", ""+Map.getWidth()+" "+Map.getHeight()+ " " + Map.getProvinces().length + " " + Map.getProvinces()[0].length);
+        Log.d("myLog", "" + Map.getWidth() + " " + Map.getHeight() + " " + Map.getProvinces().length + " " + Map.getProvinces()[0].length);
         c.close();
         c = mDataBase.query("players", null, null, null, null, null, null);
 //        int player_id = game.getActivity().getSharedPreferences("save", Context.MODE_PRIVATE).getInt("player_id", -1);
@@ -151,7 +152,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 //                    isHuman = c.getInt(isHumanColIndex);
 //                    game.getPlayers().add(game.addPlayerFromDb(id, money, recruits, isHuman, color, name));
 //                }
-                game.getPlayers().add(game.addPlayerFromDb(id,money,recruits,-1,color,name));
+                game.getPlayers().add(game.addPlayerFromDb(id, money, recruits, -1, color, name));
             } while (c.moveToNext());
         }
         c.close();
@@ -179,6 +180,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             } while (c.moveToNext());
         }
         c.close();
+
+        Log.d("myLog", "" + Map.getWidth() + " " + Map.getHeight());
+        for (int i = 0; i < Map.getProvinces().length; i++)
+            for (int j = 0; j < Map.getProvinces()[0].length; j++)
+                if (Map.getProvinces()[i][j].getType() != Province.Type.VOID) {
+                    for (Province p : Map.getNeighbours(Map.getProvinces()[i][j]))
+                        Map.getProvinces()[i][j].getNeighbours().add(p);
+//                    Collections.shuffle(Map.getProvinces()[i][j].getNeighbours());
+                }
+
+
         c = mDataBase.query("armies", null, null, null, null, null, null);
         if (c.moveToFirst()) {
             int strengthColIndex = c.getColumnIndex("strength");
