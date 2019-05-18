@@ -72,30 +72,35 @@ public class AIPlayer extends Player {
             recruitableArmy = (int) (getMoneyIncome() * 100);
         else recruitableArmy = (int) (getMoney() * 50);
         recruitableArmy -= 200;
-//        int gthreat = 0;
-//        int[] threats = new int[borderProvinces.size()];
-//        for (
-//                int i = 0; i < borderProvinces.size(); i++) {
-//            Province p = borderProvinces.get(i);
-//            for (Province n : p.getNeighbours()) {
-//                if (n.getOwner() != p.getOwner()) {
-//                    threats[i] += 100;
-//                    gthreat += 100;
-//                }
-//                for (Army a : n.getArmies())
-//                    if (a.getOwner() != p.getOwner()) {
-//                        threats[i] += a.getStrength() + 100;
-//                        gthreat += a.getStrength() + 100;
-//                    }
-//            }
-//        }
+        int gthreat = 0;
+        int[] threats = new int[borderProvinces.size()];
+        for (
+                int i = 0; i < borderProvinces.size(); i++) {
+            Province p = borderProvinces.get(i);
+            for (Province n : p.getNeighbours()) {
+                int lthreat = 0;
+                if (n.getOwner() != p.getOwner())
+                    lthreat += 2500;
+                for (Army a : n.getArmies())
+                    if (a.getOwner() != p.getOwner()) {
+                        lthreat += a.getStrength();
+                        gthreat += a.getStrength();
+                    }
+                for (Province pn : n.getNeighbours())
+                    if (borderProvinces.contains(pn)) {
+                        threats[borderProvinces.indexOf(pn)] += lthreat;
+                        gthreat += lthreat;
+                    }
+            }
+        }
         for (int i = 0; i < borderProvinces.size(); i++) {
             //Log.d("myLog", toString()+" "+threats[i]+" "+"gthread "+gthreat+" "+recruitableArmy);
             int defense = 0;
             for (Army a : borderProvinces.get(i).getArmies())
                 defense += a.getStrength();
-            if (recruitableArmy > 0 && (recruitableArmy / borderProvinces.size() - defense) > 0)
-                pickMilitary((recruitableArmy / borderProvinces.size() - defense), borderProvinces.get(i));
+            if (threats[i] > 0 && gthreat > 0 && recruitableArmy > 0 && (recruitableArmy * threats[i] / gthreat - defense) > 0) {
+                pickMilitary((recruitableArmy * threats[i] / gthreat - defense), borderProvinces.get(i));
+            }
 
         }
         for (Province p : getProvinces()) uniteArmy(p);
