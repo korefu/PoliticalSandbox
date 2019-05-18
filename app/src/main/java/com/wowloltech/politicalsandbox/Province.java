@@ -17,7 +17,6 @@ public class Province {
     private List<Army> armies;
     private  Type type;
     private List<Province> neighbours;
-    private Integer numberOfFriendlyProvinces = 0;
 
     public Province(int x, int y, int id) {
         this.x = x;
@@ -31,14 +30,12 @@ public class Province {
         neighbours = null;
     }
 
-    public Integer getNumberOfFriendlyProvinces() {
-        return numberOfFriendlyProvinces;
-    }
-    public void updateNumberOfFriendlyProvinces() {
-        numberOfFriendlyProvinces=0;
-        for (Province p: neighbours)
-            if (getOwner()==p.getOwner())
+    public Integer getNumberOfFriendlyProvinces(Player player) {
+        Integer numberOfFriendlyProvinces=0;
+        for (Province province: neighbours)
+            if (player==province.getOwner())
                 numberOfFriendlyProvinces++;
+            return numberOfFriendlyProvinces;
     }
 
     public List<Province> getNeighbours() {
@@ -89,12 +86,9 @@ public class Province {
 
     @Override
     public String toString() {
-        return "income " + income +
-                "\n  recruits " + recruits +
-                "\n  id " + id +
-                "\n  x " + x +
-                "\n  y " + y +
-                "\n  owner " + owner + "\n";
+        return "\nx=" + x +
+                " y=" + y +
+                " owner= " + getOwner().getName();
     }
 
     public double getIncome() {

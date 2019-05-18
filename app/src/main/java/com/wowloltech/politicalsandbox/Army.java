@@ -83,7 +83,7 @@ public class Army {
 
     @Override
     public String toString() {
-        return "Численность: " + strength + "\n";
+        return "\nЧисленность: " + strength + " владелец " + getOwner().getName();
     }
 
     public int getSpeed() {

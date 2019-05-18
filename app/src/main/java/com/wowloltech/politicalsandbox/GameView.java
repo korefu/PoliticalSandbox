@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -259,7 +260,7 @@ public class GameView extends View {
             Province province = findProvinceByTouch();
             if (province != null && province.getType() != Province.Type.VOID && !activity.AITurn) {
                 selectedProvince = province;
-                //      Log.d("myLog", selectedProvince.getArmies().toString());
+//                Log.d("myLog", selectedProvince.getNeighbours().toString());
                 if (activity.newGame) {
                     activity.getSharedPreferences("save", Context.MODE_PRIVATE).edit().putInt("player_id", province.getOwner().getId()).apply();
                     activity.currentTurn(province.getOwner());

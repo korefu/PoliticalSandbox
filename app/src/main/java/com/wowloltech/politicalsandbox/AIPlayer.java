@@ -1,5 +1,7 @@
 package com.wowloltech.politicalsandbox;
 
+import android.util.Log;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -37,28 +39,17 @@ public class AIPlayer extends Player {
                 }
         for (int i = 0; i < getArmies().size(); i++) {
             Army a = getArmies().get(i);
-            a.getLocation().updateNumberOfFriendlyProvinces();
-            for (Province p : a.getLocation().getNeighbours()) {
-                p.updateNumberOfFriendlyProvinces();
-            }
             Collections.sort(a.getLocation().getNeighbours(), new Comparator<Province>() {
                 @Override
                 public int compare(Province p1, Province p2) {
-                    return -p1.getNumberOfFriendlyProvinces().compareTo(p2.getNumberOfFriendlyProvinces());
+                    return -p1.getNumberOfFriendlyProvinces(AIPlayer.this).compareTo(p2.getNumberOfFriendlyProvinces(AIPlayer.this));
                 }
             });
-            if (a.getLocation().getNumberOfFriendlyProvinces() - a.getLocation().getNeighbours().size() == 0) {
-                setMoney(getMoney() + (double) a.getStrength() / 50);
-                setRecruits(getRecruits() + a.getStrength());
-                Army.remove(a);
-                break;
-            }
             for (Province p : a.getLocation().getNeighbours()) {
-//                Log.d("myLog", (p.getOwner()!=a.getOwner()) + " " + p.getNumberOfFriendlyProvinces());
                 if (p.getOwner() != a.getOwner()) {
                     int sum = 0;
-                    for (Army enemy : p.getOwner().getArmies()) {
-                        if (enemy.getLocation() == p) sum += enemy.getStrength();
+                    for (Army enemy : p.getArmies()) {
+                        sum += enemy.getStrength();
                     }
                     if (a.getStrength() - sum >= 50 && a.getSpeed() > 0) {
                         attackProvince(a, p);
@@ -66,21 +57,20 @@ public class AIPlayer extends Player {
                     }
                 }
             }
+            if (a.getLocation().getNumberOfFriendlyProvinces(AIPlayer.this) - a.getLocation().getNeighbours().size() == 0) {
+                setMoney(getMoney() + (double) a.getStrength() / 50);
+                setRecruits(getRecruits() + a.getStrength());
+                borderProvinces.remove(a.getLocation());
+                Army.remove(a);
+                i--;
+            }
 
         }
 
         int recruitableArmy;
-        if (
-
-                getMoneyIncome() * 100 <=
-
-                        getMoney() * 50)
-            recruitableArmy = (int) (
-
-                    getMoneyIncome() * 100);
-        else recruitableArmy = (int) (
-
-                getMoney() * 50);
+        if (getMoneyIncome() * 100 <= getMoney() * 50)
+            recruitableArmy = (int) (getMoneyIncome() * 100);
+        else recruitableArmy = (int) (getMoney() * 50);
         recruitableArmy -= 200;
 //        int gthreat = 0;
 //        int[] threats = new int[borderProvinces.size()];
