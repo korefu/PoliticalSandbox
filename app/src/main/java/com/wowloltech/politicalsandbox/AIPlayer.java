@@ -71,7 +71,7 @@ public class AIPlayer extends Player {
         if (getMoneyIncome() * 100 <= getMoney() * 50)
             recruitableArmy = (int) (getMoneyIncome() * 100);
         else recruitableArmy = (int) (getMoney() * 50);
-        recruitableArmy -= 200;
+        recruitableArmy -= 10;
         int gthreat = 0;
         int[] threats = new int[borderProvinces.size()];
         for (

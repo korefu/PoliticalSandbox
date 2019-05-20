@@ -224,12 +224,13 @@ public class Player {
         setMoney(getMoney() + income);
         setRecruits(getRecruits() + newRecruits);
         if (getMoney() < 0) {
-            setMoney(0);
-            for (Iterator<Army> i = getArmies().iterator(); i.hasNext(); ) {
-                Army a = i.next();
-                a.getLocation().getArmies().remove(a);
-                Army.remove(a, i);
-            }
+            setMoney(0.1);
+            int totalStrength=0;
+            double lIncome = getMoneyIncome();
+            for (Army a: getArmies())
+                totalStrength+=a.getStrength();
+            for (Army a: getArmies())
+                a.setStrength(a.getStrength()*(int)(-lIncome*100)/totalStrength);
         }
     }
 
