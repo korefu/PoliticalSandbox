@@ -171,7 +171,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     int ownerID = c.getInt(ownerColIndex);
 
                     Log.d(LOG_TAG, "_id = " + id + ", income = " + income + ", owner = " + ownerID);
-                    Map.getProvinces()[id / Map.getWidth()][id % Map.getWidth()] = new Province(id % Map.getWidth(), id / Map.getWidth(), id, (int) income * 20, income, game.findPlayerByID(ownerID), type);
+                    Map.getProvinces()[id / Map.getWidth()][id % Map.getWidth()] = new Province(id % Map.getWidth(), id / Map.getWidth(), id, (int) income * 30, income, game.findPlayerByID(ownerID), type);
                     game.findPlayerByID(ownerID).getProvinces().add(Map.getProvinces()[id / Map.getWidth()][id % Map.getWidth()]);
                 } else {
                     int id = c.getInt(idColIndex) - 1;
