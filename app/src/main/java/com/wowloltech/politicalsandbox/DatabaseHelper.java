@@ -216,6 +216,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             localC.close();
         }
         c.close();
-
+        try {
+            c = mDataBase.query("bridges", null, null, null, null, null, null);
+            if (c.moveToFirst()) do {
+                int x1 = c.getInt(c.getColumnIndex("posx1"));
+                int y1 = c.getInt(c.getColumnIndex("posy1"));
+                int x2 = c.getInt(c.getColumnIndex("posx2"));
+                int y2 = c.getInt(c.getColumnIndex("posy2"));
+                Map.getProvinces()[y1][x1].getNeighbours().add(Map.getProvinces()[y2][x2]);
+                Map.getProvinces()[y2][x2].getNeighbours().add(Map.getProvinces()[y1][x1]);
+            } while (c.moveToNext());
+            c.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
+

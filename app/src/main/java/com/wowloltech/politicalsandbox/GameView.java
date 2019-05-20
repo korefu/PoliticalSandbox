@@ -41,7 +41,7 @@ public class GameView extends View {
     // Scaling objects
     private ScaleGestureDetector mScaleDetector;
     private GestureDetector gestureDetector;
-    private float mScaleFactor = 1.f;
+    private float mScaleFactor = 0.75f;
     // The focus point for the scaling
     private float scalePointX;
     private float scalePointY;
@@ -92,6 +92,7 @@ public class GameView extends View {
             for (int x = 0; x < Map.getWidth(); x++)
                 drawPathByProvince(canvas, Map.getProvinces()[y][x]);
         canvas.restore();
+        setDrawingCacheEnabled(true);
 
     }
 
@@ -212,7 +213,7 @@ public class GameView extends View {
             scalePointY = detector.getFocusY();
 
             // Don't let the object get too small or too large.
-            mScaleFactor = Math.max(0.1f, Math.min(mScaleFactor, 10.0f));
+            mScaleFactor = Math.max(0.2f, Math.min(mScaleFactor, 5.0f));
             invalidate();
             return true;
         }
