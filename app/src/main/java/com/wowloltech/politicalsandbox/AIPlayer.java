@@ -51,7 +51,7 @@ public class AIPlayer extends Player {
                     for (Army enemy : p.getArmies()) {
                         sum += enemy.getStrength();
                     }
-                    if (a.getStrength() - sum >= 50 && a.getSpeed() > 0) {
+                    if (a.getStrength() - sum >= 20 && a.getSpeed() > 0) {
                         attackProvince(a, p);
                         borderProvinces.add(p);
                     }
