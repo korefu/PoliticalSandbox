@@ -1,8 +1,9 @@
 package com.wowloltech.politicalsandbox;
 
-import android.content.ContentValues;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.wowloltech.politicalsandbox.models.Player;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,10 +16,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Tools {
     private static final AtomicInteger sNextGeneratedId = new AtomicInteger(1);
-    public static DatabaseHelper dbHelper;
-    public static MainFragment mainFragment;
-    private static int idCounter;
-    public static Game game;
 
     public static int generateViewId() {
         for (; ; ) {
@@ -45,7 +42,7 @@ public class Tools {
         }
     }
 
-    public static View getViewByTag(ViewGroup root, String tag) {
+    private static View getViewByTag(ViewGroup root, String tag) {
         final int childCount = root.getChildCount();
         for (int i = 0; i < childCount; i++) {
             final View child = root.getChildAt(i);
@@ -68,16 +65,5 @@ public class Tools {
             list.add(null);
         }
         return list;
-    }
-
-    public static int getIdCounter() {
-        return idCounter;
-    }
-
-    public static void setIdCounter(int idC) {
-        idCounter = idC;
-        ContentValues cv = new ContentValues();
-        cv.put("id_counter", idCounter);
-        Tools.dbHelper.getDb().update("game", cv, null, null);
     }
 }

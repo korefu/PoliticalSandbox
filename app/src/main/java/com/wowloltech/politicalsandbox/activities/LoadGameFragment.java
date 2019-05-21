@@ -1,5 +1,6 @@
-package com.wowloltech.politicalsandbox;
+package com.wowloltech.politicalsandbox.activities;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
@@ -10,6 +11,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.wowloltech.politicalsandbox.R;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,7 +29,7 @@ public class LoadGameFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.load_game_fragment, null);
+        View v = View.inflate(getActivity(), R.layout.load_game_fragment, null);
         v.findViewById(R.id.loadgame_btn_cancel).setOnClickListener(this);
         v.findViewById(R.id.loadgame_btn_delete).setOnClickListener(this);
         v.findViewById(R.id.loadgame_btn_load).setOnClickListener(this);
@@ -37,7 +40,7 @@ public class LoadGameFragment extends Fragment implements View.OnClickListener {
         while (iterator.hasNext()) {
             String map = iterator.next();
             if (map.length() <= 3) { iterator.remove(); continue; }
-            if (!map.substring(map.length() - 3).equals(".db")) { iterator.remove(); continue; }
+            if (!map.substring(map.length() - 3).equals(".db")) { iterator.remove(); }
             else iterator.set(map.substring(0, map.length() - 3));
         }
         Log.d("myLog", saves.toString());
@@ -54,6 +57,7 @@ public class LoadGameFragment extends Fragment implements View.OnClickListener {
         return v;
     }
 
+    @SuppressLint("ApplySharedPref")
     @Override
     public void onClick(View view) {
         switch (view.getId()) {

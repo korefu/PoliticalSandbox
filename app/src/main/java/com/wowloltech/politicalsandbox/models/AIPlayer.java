@@ -1,6 +1,6 @@
-package com.wowloltech.politicalsandbox;
+package com.wowloltech.politicalsandbox.models;
 
-import android.util.Log;
+import com.wowloltech.politicalsandbox.Game;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -9,13 +9,13 @@ import java.util.List;
 
 public class AIPlayer extends Player {
 
-    public AIPlayer(int id, double money, int recruits, int color, String name) {
-        super(id, money, recruits, color, name);
+    public AIPlayer(int id, double money, int recruits, int color, String name, Game game) {
+        super(id, money, recruits, color, name, game);
         this.setIsHuman(false);
     }
 
-    public AIPlayer(int id, double money, int recruits, int color, String name, List<Province> provinces, List<Army> armies) {
-        super(id, money, recruits, color, name);
+    public AIPlayer(int id, double money, int recruits, int color, String name, List<Province> provinces, List<Army> armies, Game game) {
+        super(id, money, recruits, color, name, game);
         this.setIsHuman(false);
         for (Province p : provinces) {
             getProvinces().add(p);
@@ -52,7 +52,7 @@ public class AIPlayer extends Player {
                         sum += enemy.getStrength();
                     }
                     if (a.getStrength() - sum >= 40 && a.getSpeed() > 0) {
-                        attackProvince(a, p);
+                        getGame().attackProvince(a, p);
                         borderProvinces.add(p);
                     }
                 }
@@ -61,7 +61,7 @@ public class AIPlayer extends Player {
                 setMoney(getMoney() + (double) a.getStrength() / 50);
                 setRecruits(getRecruits() + a.getStrength());
                 borderProvinces.remove(a.getLocation());
-                Army.remove(a);
+                getGame().removeArmy(a);
                 i--;
             }
 

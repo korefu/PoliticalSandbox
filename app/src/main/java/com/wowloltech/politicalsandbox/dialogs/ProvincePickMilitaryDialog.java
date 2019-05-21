@@ -1,4 +1,4 @@
-package com.wowloltech.politicalsandbox;
+package com.wowloltech.politicalsandbox.dialogs;
 
 
 import android.app.DialogFragment;
@@ -14,35 +14,27 @@ import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-public class ProvinceDivideArmyDialog extends DialogFragment implements OnClickListener, SeekBar.OnSeekBarChangeListener {
+import com.wowloltech.politicalsandbox.activities.GameActivity;
+import com.wowloltech.politicalsandbox.R;
+
+public class ProvincePickMilitaryDialog extends DialogFragment implements OnClickListener, SeekBar.OnSeekBarChangeListener {
 
     final String LOG_TAG = "myLog";
-    TextView divideLeft;
-    TextView divideRight;
+    TextView recruitSelected;
     SeekBar seekBar;
     GameActivity activity;
-    Army army;
+    int selectedRecruits;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-
-        View v = inflater.inflate(R.layout.menu_divide, null);
+        View v = inflater.inflate(R.layout.menu_recruit, null);
         v.findViewById(R.id.btn_ok).setOnClickListener(this);
         v.findViewById(R.id.btn_cancel).setOnClickListener(this);
-
-        divideLeft = (TextView) v.findViewById(R.id.menu_divide_text_left);
-        divideLeft.setText(String.valueOf(army.getStrength() / 2));
-        divideRight = (TextView) v.findViewById(R.id.menu_divide_text_right);
-        divideRight.setText(String.valueOf(army.getStrength() / 2));
-
-        seekBar = (SeekBar) v.findViewById(R.id.menu_recruit_seekbar);
+        recruitSelected = v.findViewById(R.id.menu_recruit_text_selected);
+        seekBar = v.findViewById(R.id.menu_recruit_seekbar);
         seekBar.setOnSeekBarChangeListener(this);
-        seekBar.setProgress(50);
+        recruitSelected.setText("0");
         return v;
-    }
-
-    public void setArmy(Army army) {
-        this.army = army;
     }
 
     public void setActivity(GameActivity activity) {
@@ -50,11 +42,11 @@ public class ProvinceDivideArmyDialog extends DialogFragment implements OnClickL
     }
 
     public void onClick(View v) {
-        Log.d(LOG_TAG, "ProvinceDivide: " + ((Button) v).getText());
+        Log.d(LOG_TAG, "ProvinceRecruitDialog: " + ((Button) v).getText());
         switch (v.getId()) {
             case R.id.btn_ok:
                 if (seekBar.getProgress() * activity.getGame().getCurrentPlayer().getRecruits() / 100 > 0) {
-                    activity.getGame().getCurrentPlayer().divideArmy(Integer.valueOf(divideLeft.getText().toString()), Integer.valueOf(divideRight.getText().toString()), army);
+                    activity.getGame().getCurrentPlayer().pickMilitary(selectedRecruits, activity.gameView.getSelectedProvince());
                 }
                 break;
             case R.id.btn_cancel:
@@ -65,19 +57,22 @@ public class ProvinceDivideArmyDialog extends DialogFragment implements OnClickL
 
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
-        Log.d(LOG_TAG, "ProvinceDivide: onDismiss");
+        Log.d(LOG_TAG, "ProvinceRecruitDialog: onDismiss");
         activity.updateScreen();
     }
 
     public void onCancel(DialogInterface dialog) {
         super.onCancel(dialog);
-        Log.d(LOG_TAG, "ProvinceDivide: onCancel");
+        Log.d(LOG_TAG, "ProvinceRecruitDialog: onCancel");
     }
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-        divideLeft.setText(String.valueOf(army.getStrength() * seekBar.getProgress() / 100));
-        divideRight.setText(String.valueOf(army.getStrength() * (100 - seekBar.getProgress()) / 100));
+        if (activity.getGame().getCurrentPlayer().getMoney() * 50 >= activity.getGame().getCurrentPlayer().getRecruits())
+            selectedRecruits = seekBar.getProgress() * activity.getGame().getCurrentPlayer().getRecruits() / 100;
+        else
+            selectedRecruits = (int) (seekBar.getProgress() * activity.getGame().getCurrentPlayer().getMoney() / 2);
+        recruitSelected.setText(String.valueOf(selectedRecruits));
     }
 
     @Override

@@ -1,18 +1,25 @@
-package com.wowloltech.politicalsandbox;
+package com.wowloltech.politicalsandbox.activities;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 
+import com.wowloltech.politicalsandbox.Game;
+import com.wowloltech.politicalsandbox.models.Army;
+import com.wowloltech.politicalsandbox.models.Map;
+import com.wowloltech.politicalsandbox.models.Player;
+import com.wowloltech.politicalsandbox.models.Province;
+
 import java.util.List;
 
+@SuppressLint("ViewConstructor")
 public class GameView extends View {
     public Path provincePath;
     public float size = 100;
@@ -25,8 +32,6 @@ public class GameView extends View {
     private Province selectedProvince;
     private GameActivity activity;
     private Game game;
-    private boolean justScaled = false;
-    private int selectedX;
     private int selectedY;
     private boolean isArmyMoving = false;
     private boolean longPress = false;
@@ -69,6 +74,7 @@ public class GameView extends View {
             setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         mScaleDetector = new ScaleGestureDetector(activity, new ScaleListener());
         gestureDetector = new GestureDetector(activity, new MyGestureListener());
+        game.setGameView(this);
     }
 
     private void createProvincePath(Path provincePath) {
@@ -92,10 +98,9 @@ public class GameView extends View {
             for (int x = 0; x < Map.getWidth(); x++)
                 drawPathByProvince(canvas, Map.getProvinces()[y][x]);
         canvas.restore();
-        setDrawingCacheEnabled(true);
-
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         // Let the ScaleGestureDetector inspect all events.
@@ -112,15 +117,12 @@ public class GameView extends View {
 
     private void drawPathByProvince(Canvas canvas, Province province) {
         if (province.getType() != Province.Type.VOID) {
-            name.append(province.getIncome());
-            name.append(' ');
+            name.append(province.getIncome()).append(' ');
             try {
                 for (Player p : game.getPlayers())
                     for (Army a : p.getArmies())
-                        if (a.getLocation().getId() == province.getId()) {
-                            name.append(a.getStrength());
-                            name.append(' ');
-                        }
+                        if (a.getLocation().getId() == province.getId())
+                            name.append(a.getStrength()).append(' ');
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -173,13 +175,14 @@ public class GameView extends View {
                     selectedY = (int) Math.floor((cY - (size * 0.5 * tempX / halfWidth)) / (size * 1.5));
             }
         }
+        int selectedX;
         if (selectedY % 2 == 0)
             selectedX = (int) Math.floor(cX / (int) (sqrt3 * size));
         else
             selectedX = (int) Math.floor((cX - size * sqrt3 / 2) / (sqrt3 * size));
         try {
             return Map.getProvinces()[selectedY][selectedX];
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return null;
     }
@@ -197,8 +200,8 @@ public class GameView extends View {
         this.isArmyMoving = armyMoving;
     }
 
-    public boolean isArmyMoving() {
-        return isArmyMoving;
+    public boolean isArmyNotMoving() {
+        return !isArmyMoving;
     }
 
     public Province getSelectedProvince() {
@@ -216,12 +219,6 @@ public class GameView extends View {
             mScaleFactor = Math.max(0.2f, Math.min(mScaleFactor, 5.0f));
             invalidate();
             return true;
-        }
-
-        @Override
-        public void onScaleEnd(ScaleGestureDetector detector) {
-            justScaled = true;
-            super.onScaleEnd(detector);
         }
     }
 
@@ -269,11 +266,11 @@ public class GameView extends View {
                     invalidate();
                     return true;
                 }
-                if (!isArmyMoving())
+                if (isArmyNotMoving())
                     activity.openContextMenu(activity.map);
                 else if (selectedProvince.getSelected()) {
                     boolean isEnemy = movingArmy.getOwner() == selectedProvince.getOwner();
-                    movingArmy.getOwner().attackProvince(movingArmy, selectedProvince);
+                    game.attackProvince(movingArmy, selectedProvince);
                     if (!longPress || isEnemy)
                         movingArmy.getOwner().moveArmy(movingArmy, selectedProvince);
                     else {

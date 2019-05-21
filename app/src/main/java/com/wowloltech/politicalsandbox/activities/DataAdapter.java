@@ -1,7 +1,8 @@
-package com.wowloltech.politicalsandbox;
+package com.wowloltech.politicalsandbox.activities;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,28 +10,31 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.wowloltech.politicalsandbox.R;
+
 import java.util.List;
 
 class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder> {
 
     private LayoutInflater inflater;
     private List<String> saves;
-    CardView lastCard = null;
+    private CardView lastCard = null;
 
     DataAdapter(Context context, List<String> saves) {
         this.saves = saves;
         this.inflater = LayoutInflater.from(context);
     }
 
+    @NonNull
     @Override
-    public DataAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public DataAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         View view = inflater.inflate(R.layout.list_item, parent, false);
         return new ViewHolder(view, mListener);
     }
 
     @Override
-    public void onBindViewHolder(DataAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull DataAdapter.ViewHolder holder, int position) {
         String save = saves.get(position);
         holder.nameView.setText(save);
     }
@@ -45,7 +49,7 @@ class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder> {
     public interface OnItemClickListener {
         void onItemClick(int position);
     }
-    public void setOnItemClickListener(OnItemClickListener listener) {
+    void setOnItemClickListener(OnItemClickListener listener) {
         mListener = listener;
     }
 

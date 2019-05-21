@@ -1,8 +1,8 @@
-package com.wowloltech.politicalsandbox;
+package com.wowloltech.politicalsandbox.activities;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,6 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Switch;
+
+import com.wowloltech.politicalsandbox.R;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,7 +36,7 @@ public class NewGameFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.new_game_fragment, null);
+        View v = View.inflate(getActivity(), R.layout.new_game_fragment, null);
         editText = v.findViewById(R.id.selected_database);
         ha = v.findViewById(R.id.new_game_ha);
         boolean haMode = getActivity().getSharedPreferences("settings", Activity.MODE_PRIVATE).getBoolean("ha", true);
@@ -98,6 +100,7 @@ public class NewGameFragment extends Fragment implements View.OnClickListener {
         return v;
     }
 
+    @SuppressLint("ApplySharedPref")
     public void startNewGame(int position) {
         String selectedSave = maps.get(position);
         MainActivity.rewrite = true;

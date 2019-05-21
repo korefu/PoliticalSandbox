@@ -7,12 +7,16 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.wowloltech.politicalsandbox.models.Army;
+import com.wowloltech.politicalsandbox.models.Map;
+import com.wowloltech.politicalsandbox.models.Player;
+import com.wowloltech.politicalsandbox.models.Province;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Collections;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private String MAP_NAME = "testmap.db";
@@ -29,7 +33,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return mDataBase;
     }
 
-    public DatabaseHelper(Context context, String MAP_NAME, String SAVE_NAME) {
+    DatabaseHelper(Context context, String MAP_NAME, String SAVE_NAME) {
         super(context, SAVE_NAME, null, DB_VERSION);
         this.MAP_NAME = MAP_NAME;
         this.SAVE_NAME = SAVE_NAME;
@@ -41,14 +45,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         this.getReadableDatabase();
     }
 
-    public void updateDataBase() throws IOException {
+    private void updateDataBase() {
         if (mNeedUpdate) {
             File dbFile = new File(DB_PATH + SAVE_NAME);
             if (dbFile.exists())
-                dbFile.delete();
-
-            copyDataBase();
-
+                if (dbFile.delete())
+                    copyDataBase();
             mNeedUpdate = false;
         }
     }
@@ -106,16 +108,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public void readDatabase(Game game) {
-        try {
-            updateDataBase();
-        } catch (IOException ioe) {
-
-        }
-        try {
-            mDataBase = getWritableDatabase();
-        } catch (SQLException mSQLException) {
-            throw mSQLException;
-        }
+        updateDataBase();
+        mDataBase = getWritableDatabase();
         Log.d(LOG_TAG, mDataBase.toString());
         Cursor c;
         c = mDataBase.query("game", null, null, null, null, null, null);
@@ -126,7 +120,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         int turnCounterColIndex = c.getColumnIndex("turn_counter");
 
 
-        game.setIdCounterFromDb(c.getInt(idCounterColIndex));
+        game.setIdCounter(c.getInt(idCounterColIndex));
         game.setTurnCounterFromDb(c.getInt(turnCounterColIndex));
         Map.setWidth(c.getInt(widthColIndex));
         Map.setHeight(c.getInt(heightColIndex));
@@ -152,7 +146,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 //                    isHuman = c.getInt(isHumanColIndex);
 //                    game.getPlayers().add(game.addPlayerFromDb(id, money, recruits, isHuman, color, name));
 //                }
-                game.getPlayers().add(game.addPlayerFromDb(id, money, recruits, -1, color, name));
+                game.getPlayers().add(game.addPlayerFromDb(id, money, recruits, color, name));
             } while (c.moveToNext());
         }
         c.close();
@@ -171,7 +165,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     int ownerID = c.getInt(ownerColIndex);
 
                     Log.d(LOG_TAG, "_id = " + id + ", income = " + income + ", owner = " + ownerID);
-                    Map.getProvinces()[id / Map.getWidth()][id % Map.getWidth()] = new Province(id % Map.getWidth(), id / Map.getWidth(), id, (int) income * 30, income, game.findPlayerByID(ownerID), type);
+                    Map.getProvinces()[id / Map.getWidth()][id % Map.getWidth()]
+                            = new Province(id % Map.getWidth(), id / Map.getWidth(), id, (int) income * 30, income, game.findPlayerByID(ownerID), type, game);
                     game.findPlayerByID(ownerID).getProvinces().add(Map.getProvinces()[id / Map.getWidth()][id % Map.getWidth()]);
                 } else {
                     int id = c.getInt(idColIndex) - 1;
@@ -209,8 +204,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 localC = mDataBase.query("map", null, "_id = ?", new String[]{String.valueOf(locationId + 1)}, null, null, null);
                 localC.moveToFirst();
                 Province province = Map.findProvinceByID(localC.getInt(localC.getColumnIndex("_id")) - 1);
-                Army army = new Army(strength, province, p, id, speed);
+                Army army = new Army(strength, province, p, id, speed, game);
                 p.getArmies().add(army);
+                assert province != null;
                 province.getArmies().add(army);
             } while (c.moveToNext());
             localC.close();

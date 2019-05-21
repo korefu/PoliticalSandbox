@@ -1,6 +1,7 @@
-package com.wowloltech.politicalsandbox;
+package com.wowloltech.politicalsandbox.activities;
 
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -14,9 +15,21 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.wowloltech.politicalsandbox.dialogs.ProvinceInfoDialog;
+import com.wowloltech.politicalsandbox.dialogs.ProvinceMoveArmyDialog;
+import com.wowloltech.politicalsandbox.dialogs.ProvincePickMilitaryDialog;
+import com.wowloltech.politicalsandbox.dialogs.ProvinceSelectArmyDialog;
+import com.wowloltech.politicalsandbox.Game;
+import com.wowloltech.politicalsandbox.models.AIPlayer;
+import com.wowloltech.politicalsandbox.models.Army;
+import com.wowloltech.politicalsandbox.models.HumanPlayer;
+import com.wowloltech.politicalsandbox.models.Player;
+import com.wowloltech.politicalsandbox.R;
+
 import java.text.DecimalFormat;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 public class GameActivity extends Activity implements View.OnClickListener {
 
@@ -102,7 +115,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        if (!gameView.isArmyMoving()) {
+        if (gameView.isArmyNotMoving()) {
             if (view.getId() == R.id.btn_nextTurn) {
                 if (!newGame) nextTurn();
                 else {
@@ -111,10 +124,10 @@ public class GameActivity extends Activity implements View.OnClickListener {
                         Player player = game.getPlayers().get(i);
                         if (gameView.getSelectedProvince().getOwner() == player)
                             players.add(new HumanPlayer(player.getId(), player.getMoney(), player.getRecruits(), player.getColor(),
-                                    player.getName(), player.getProvinces(), player.getArmies()));
+                                    player.getName(), player.getProvinces(), player.getArmies(), game));
                         else
                             players.add(new AIPlayer(player.getId(), player.getMoney(), player.getRecruits(), player.getColor(),
-                                    player.getName(), player.getProvinces(), player.getArmies()));
+                                    player.getName(), player.getProvinces(), player.getArmies(), game));
                     }
                     game.getPlayers().clear();
                     game.getPlayers().addAll(players);
@@ -123,7 +136,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
                     button.setText(R.string.next_turn);
                     newGame = false;
                     game.getCurrentPlayer().nextTurn();
-                    if (sPref.getString("new_or_load", "load").equals("new"))
+                    if (Objects.equals(sPref.getString("new_or_load", "load"), "new"))
                         currentTurn(game.getCurrentPlayer());
                 }
             }
@@ -137,7 +150,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
     }
 
     public void movingArmy(Army a) {
-        if (!gameView.isArmyMoving()) {
+        if (gameView.isArmyNotMoving()) {
             if (a.getSpeed() > 0) {
                 gameView.neighbours = a.getLocation().getNeighbours();
                 for (int i = 0; i < gameView.neighbours.size(); i++) {
@@ -196,6 +209,7 @@ public class GameActivity extends Activity implements View.OnClickListener {
         return super.onContextItemSelected(item);
     }
 
+    @SuppressLint("StaticFieldLeak")
     public void nextTurn() {
         gameThread = new AsyncTask<Void, Void, Void>() {
             @Override
@@ -221,9 +235,9 @@ public class GameActivity extends Activity implements View.OnClickListener {
                     updateScreen();
                     AITurn = false;
                 } else {
-                    Tools.dbHelper.getDb().close();
-                    Log.d("myLog", Tools.dbHelper.getDatabaseName());
-                    deleteDatabase(Tools.dbHelper.getDatabaseName());
+                    game.getDbHelper().getDb().close();
+                    Log.d("myLog", game.getDbHelper().getDatabaseName());
+                    deleteDatabase(game.getDbHelper().getDatabaseName());
                     sPref.edit().putString("save_database", "null").commit();
                     GameActivity.this.finish();
                 }
@@ -252,9 +266,10 @@ public class GameActivity extends Activity implements View.OnClickListener {
             menuFragment = (MenuFragment) getFragmentManager().findFragmentById(b.getInt("menuId"));
         } catch (Exception ignored) {
         }
-        if (menuFragment == null)
+        if (menuFragment == null) {
             menuFragment = new MenuFragment();
-
+            menuFragment.setGame(game);
+        }
         registerForContextMenu(map);
     }
 

@@ -1,7 +1,9 @@
-package com.wowloltech.politicalsandbox;
+package com.wowloltech.politicalsandbox.activities;
 
 import android.app.Activity;
 import android.os.Bundle;
+
+import com.wowloltech.politicalsandbox.R;
 
 public class MainActivity extends Activity {
     public static boolean rewrite = false;

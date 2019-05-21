@@ -1,4 +1,4 @@
-package com.wowloltech.politicalsandbox;
+package com.wowloltech.politicalsandbox.dialogs;
 
 import android.app.DialogFragment;
 import android.content.DialogInterface;
@@ -14,8 +14,13 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
+import com.wowloltech.politicalsandbox.activities.GameActivity;
+import com.wowloltech.politicalsandbox.models.Army;
+import com.wowloltech.politicalsandbox.R;
+
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 public class ProvinceMoveArmyDialog extends DialogFragment implements OnClickListener {
     final String LOG_TAG = "myLog";
@@ -25,13 +30,13 @@ public class ProvinceMoveArmyDialog extends DialogFragment implements OnClickLis
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-        armies = new LinkedList<Army>();
+        Objects.requireNonNull(getDialog().getWindow()).requestFeature(Window.FEATURE_NO_TITLE);
+        armies = new LinkedList<>();
         for (Army a : activity.getGame().getCurrentPlayer().getArmies())
             if (a.getLocation() == activity.gameView.getSelectedProvince())
                 armies.add(a);
-        View v = inflater.inflate(R.layout.menu_select_army, null);
-        listView = (ListView) v.findViewById(R.id.listView);
+        View v = View.inflate(getActivity(), R.layout.menu_select_army, null);
+        listView = v.findViewById(R.id.listView);
         String[] s = new String[armies.size()];
         for (int i = 0; i < s.length; i++)
             s[i] = armies.get(i).toString();

@@ -1,8 +1,7 @@
-package com.wowloltech.politicalsandbox;
+package com.wowloltech.politicalsandbox.activities;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,6 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
+
+import com.wowloltech.politicalsandbox.R;
+
+import java.util.Objects;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -21,10 +24,10 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     Button continueButton;
     Button loadGameButton;
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.main_fragment, null);
-        Tools.mainFragment = this;
+        View v = View.inflate(getActivity(), R.layout.main_fragment, null);
         newGameButton = v.findViewById(R.id.btn_new_game);
         continueButton = v.findViewById(R.id.btn_continue);
         loadGameButton = v.findViewById(R.id.btn_load_game);
@@ -46,7 +49,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                         .commit();
                 break;
             case R.id.btn_continue:
-                if (getActivity().getSharedPreferences("save", MODE_PRIVATE).getString("save_database", "null").equals("null"))
+                if (Objects.equals(getActivity().getSharedPreferences("save", MODE_PRIVATE).getString("save_database", "null"), "null"))
                     Toast.makeText(getActivity(), "Последней сохраненной игры не существует", Toast.LENGTH_SHORT).show();
                 else {
                     getActivity().getSharedPreferences("save", Activity.MODE_PRIVATE).edit().putString("new_or_load", "load").apply();

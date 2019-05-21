@@ -1,4 +1,4 @@
-package com.wowloltech.politicalsandbox;
+package com.wowloltech.politicalsandbox.dialogs;
 
 import android.app.DialogFragment;
 import android.content.DialogInterface;
@@ -10,6 +10,13 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.TextView;
 
+import com.wowloltech.politicalsandbox.activities.GameActivity;
+import com.wowloltech.politicalsandbox.models.Army;
+import com.wowloltech.politicalsandbox.models.Player;
+import com.wowloltech.politicalsandbox.R;
+
+import java.util.Objects;
+
 public class ProvinceInfoDialog extends DialogFragment {
 
     final String LOG_TAG = "myLog";
@@ -20,12 +27,12 @@ public class ProvinceInfoDialog extends DialogFragment {
     TextView armies;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-        View v = inflater.inflate(R.layout.menu_get_province_info, null);
-        owner = (TextView) v.findViewById(R.id.province_info_owner);
-        income = (TextView) v.findViewById(R.id.province_info_income);
-        recruits = (TextView) v.findViewById(R.id.province_info_recruits);
-        armies = (TextView) v.findViewById(R.id.province_info_armies);
+        Objects.requireNonNull(getDialog().getWindow()).requestFeature(Window.FEATURE_NO_TITLE);
+        View v = View.inflate(getActivity(), R.layout.menu_get_province_info, null);
+        owner = v.findViewById(R.id.province_info_owner);
+        income = v.findViewById(R.id.province_info_income);
+        recruits = v.findViewById(R.id.province_info_recruits);
+        armies = v.findViewById(R.id.province_info_armies);
         setText();
         return v;
     }
@@ -42,7 +49,7 @@ public class ProvinceInfoDialog extends DialogFragment {
         for (Player p : activity.getGame().getPlayers())
             for (Army a : p.getArmies())
                 if (a.getLocation().getId() == activity.gameView.getSelectedProvince().getId())
-                    name.append("Владелец: " + p + "\n" + a.toString());
+                    name.append("Владелец: ").append(p).append("\n").append(a.toString());
         armies.setText("Армии: \n" + name);
     }
 

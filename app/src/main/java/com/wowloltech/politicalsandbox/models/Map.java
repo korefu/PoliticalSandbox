@@ -1,9 +1,5 @@
-package com.wowloltech.politicalsandbox;
+package com.wowloltech.politicalsandbox.models;
 
-import android.graphics.Color;
-
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedList;
 
 public class Map {
@@ -38,7 +34,7 @@ public class Map {
     public static Province findProvinceByID(int id) {
         try {
             return Map.provinces[id / Map.width][id % Map.width];
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return null;
     }

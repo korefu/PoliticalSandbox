@@ -1,6 +1,8 @@
-package com.wowloltech.politicalsandbox;
+package com.wowloltech.politicalsandbox.models;
 
-import android.content.ContentValues;
+import android.support.annotation.NonNull;
+
+import com.wowloltech.politicalsandbox.Game;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -17,6 +19,7 @@ public class Province {
     private List<Army> armies;
     private  Type type;
     private List<Province> neighbours;
+    private Game game;
 
     public Province(int x, int y, int id) {
         this.x = x;
@@ -28,9 +31,10 @@ public class Province {
         recruits = 0;
         armies = null;
         neighbours = null;
+        game = null;
     }
 
-    public Integer getNumberOfFriendlyProvinces(Player player) {
+    Integer getNumberOfFriendlyProvinces(Player player) {
         Integer numberOfFriendlyProvinces=0;
         for (Province province: neighbours)
             if (player==province.getOwner())
@@ -50,7 +54,7 @@ public class Province {
         return armies;
     }
 
-    public Province(int x, int y, int id, int recruits, double income, Player owner, Type type) {
+    public Province(int x, int y, int id, int recruits, double income, Player owner, Type type, Game game) {
         this.x = x;
         this.y = y;
         this.id = id;
@@ -60,6 +64,7 @@ public class Province {
         armies = new LinkedList<>();
         neighbours = new ArrayList<>();
         this.type = type;
+        this.game = game;
     }
 
 
@@ -84,6 +89,7 @@ public class Province {
         this.selected = selected;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "\nx=" + x +
@@ -105,12 +111,10 @@ public class Province {
 
     public void setOwner(Player owner) {
         this.owner = owner;
-        ContentValues cv = new ContentValues();
-        cv.put("owner", owner.getId());
-        Tools.dbHelper.getDb().update("map", cv, "_id = ?", new String[]{String.valueOf(getId() + 1)});
+        game.updateMapDb(getId(), "owner", String.valueOf(owner.getId()));
     }
 
-    enum Type {
+    public enum Type {
         VOID(0), PLAIN(1);
         int value;
 
