@@ -69,7 +69,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         editorView = new EditorView(this);
         map.addView(editorView);
         game.editMap(getSharedPreferences("save", MODE_PRIVATE).getString("save_database", "testsave.db"));
-        selectedPlayer = game.findPlayerByID(0);
+        selectedPlayer = game.getPlayers().get(0);
         editText.setText(selectedPlayer.getName());
     }
 

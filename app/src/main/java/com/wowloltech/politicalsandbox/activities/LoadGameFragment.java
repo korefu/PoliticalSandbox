@@ -1,10 +1,14 @@
 package com.wowloltech.politicalsandbox.activities;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -40,9 +44,13 @@ public class LoadGameFragment extends Fragment implements View.OnClickListener {
                 iterator = saves.listIterator();
         while (iterator.hasNext()) {
             String map = iterator.next();
-            if (map.length() <= 3) { iterator.remove(); continue; }
-            if (!map.substring(map.length() - 3).equals(".db")) { iterator.remove(); }
-            else iterator.set(map.substring(0, map.length() - 3));
+            if (map.length() <= 3) {
+                iterator.remove();
+                continue;
+            }
+            if (!map.substring(map.length() - 3).equals(".db")) {
+                iterator.remove();
+            } else iterator.set(map.substring(0, map.length() - 3));
         }
         Log.d("myLog", saves.toString());
         adapter = new DataAdapter(getActivity(), saves);
@@ -65,7 +73,7 @@ public class LoadGameFragment extends Fragment implements View.OnClickListener {
             case R.id.loadgame_btn_load:
                 MainActivity.rewrite = false;
                 if (selectedSave != null) {
-                    getActivity().getSharedPreferences("save", Activity.MODE_PRIVATE).edit().putString("save_database", selectedSave+".db").commit();
+                    getActivity().getSharedPreferences("save", Activity.MODE_PRIVATE).edit().putString("save_database", selectedSave + ".db").commit();
                     getActivity().getSharedPreferences("save", Activity.MODE_PRIVATE).edit().putString("new_or_load", "load").apply();
                     isStarting = false;
                     selectedSave = null;
@@ -77,7 +85,7 @@ public class LoadGameFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.loadgame_btn_delete:
                 if (selectedSave != null) {
-                    getActivity().deleteDatabase(selectedSave+".db");
+                    getActivity().deleteDatabase(selectedSave + ".db");
                     selectedSave = null;
                     getActivity().getSharedPreferences("save", Activity.MODE_PRIVATE).edit().putString("save_database", "null").commit();
                     saves.remove(pos);
@@ -85,18 +93,26 @@ public class LoadGameFragment extends Fragment implements View.OnClickListener {
                 }
                 break;
             case R.id.btn_editor:
-                if (selectedSave != null)
-                    getActivity().getSharedPreferences("save", Activity.MODE_PRIVATE).edit().putString("save_database", selectedSave+".db").commit();
+                if (ContextCompat.checkSelfPermission(getActivity(),
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                    }
                 else {
-                    getActivity().getSharedPreferences("save", Activity.MODE_PRIVATE).edit().putString("save_database", "raw_map").commit();
-                }
+                    if (selectedSave != null)
+                        getActivity().getSharedPreferences("save", Activity.MODE_PRIVATE).edit().putString("save_database", selectedSave + ".db").commit();
+                    else {
+                        getActivity().getSharedPreferences("save", Activity.MODE_PRIVATE).edit().putString("save_database", "raw_map").commit();
+                    }
                     getActivity().getSharedPreferences("save", Activity.MODE_PRIVATE).edit().putString("new_or_load", "load").apply();
                     isStarting = false;
                     selectedSave = null;
                     startActivity(new Intent(getActivity().getApplicationContext(), EditorActivity.class));
+                }
                 break;
         }
     }
+
     public void onResume() {
         super.onResume();
         if (!isStarting)
