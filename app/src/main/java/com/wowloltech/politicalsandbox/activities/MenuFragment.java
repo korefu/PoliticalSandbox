@@ -47,13 +47,8 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.menu_btn_save:
                 String saveName = game.getDb().getPath();
-                File file1 = new File(saveName);
-                File file2 = new File(saveName.substring(0, saveName.length()-3) + " copy.db");
-                try {
-                    Tools.copy(file1, file2);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                game.getDbHelper().exportDatabase(game.getDbHelper().getDatabaseName(), saveName.substring(0, saveName.length()-3) + " copy.db", false);
+                break;
 
         }
 

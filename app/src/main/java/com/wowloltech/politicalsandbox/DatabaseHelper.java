@@ -76,7 +76,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public void exportDatabase(String databaseName, String newSaveName) {
+    public void exportDatabase(String databaseName, String newSaveName, boolean copyToSdcard) {
         try {
             getDb().close();
             File sd = Environment.getExternalStorageDirectory();
@@ -87,14 +87,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 File backupDB = new File(sd, newSaveName);
                 File newDb = null;
                 if (!(data + databaseName).equals(data + newSaveName))
-                     newDb = new File(data + newSaveName);
+                    newDb = new File(data + newSaveName);
 
                 if (currentDB.exists()) {
-                    FileChannel src = new FileInputStream(currentDB).getChannel();
-                    FileChannel dst = new FileOutputStream(backupDB).getChannel();
-                    dst.transferFrom(src, 0, src.size());
-                    src.close();
-                    dst.close();
+                    FileChannel src;
+                    FileChannel dst;
+                    if (copyToSdcard) {
+                        src = new FileInputStream(currentDB).getChannel();
+                        dst = new FileOutputStream(backupDB).getChannel();
+                        dst.transferFrom(src, 0, src.size());
+                        src.close();
+                        dst.close();
+                    }
                     if (newDb != null) {
                         src = new FileInputStream(currentDB).getChannel();
                         dst = new FileOutputStream(newDb).getChannel();

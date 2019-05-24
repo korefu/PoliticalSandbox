@@ -100,7 +100,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
                 countryPicking = true;
                 break;
             case  R.id.btn_copy_save:
-                game.getDbHelper().exportDatabase(game.getDbHelper().getDatabaseName(), saveNameEditText.getText().toString()+".db");
+                game.getDbHelper().exportDatabase(game.getDbHelper().getDatabaseName(), saveNameEditText.getText().toString()+".db", true);
                 finish();
         }
     }
