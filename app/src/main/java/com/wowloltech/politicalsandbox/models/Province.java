@@ -21,7 +21,7 @@ public class Province {
     private List<Province> neighbours;
     private Game game;
 
-    public Province(int x, int y, int id) {
+    public Province(int x, int y, int id, Game game) {
         this.x = x;
         this.y = y;
         this.id = id;
@@ -31,7 +31,33 @@ public class Province {
         recruits = 0;
         armies = null;
         neighbours = null;
-        game = null;
+        this.game = game;
+    }
+
+    public void setIncome(double income) {
+        this.income = income;
+        game.updateMapDb(getId(), "incomeLevel", String.valueOf(income));
+    }
+
+    public void setRecruits(int recruits) {
+        this.recruits = recruits;
+    }
+
+    public void setArmies(List<Army> armies) {
+        this.armies = armies;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+        game.updateMapDb(getId(), "type", String.valueOf(type.value));
+    }
+
+    public void setNeighbours(List<Province> neighbours) {
+        this.neighbours = neighbours;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
     }
 
     Integer getNumberOfFriendlyProvinces(Player player) {

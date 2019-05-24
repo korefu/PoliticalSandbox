@@ -2,13 +2,18 @@ package com.wowloltech.politicalsandbox;
 
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Looper;
 import android.util.Log;
 
+import com.wowloltech.politicalsandbox.activities.EditorActivity;
+import com.wowloltech.politicalsandbox.activities.EditorView;
 import com.wowloltech.politicalsandbox.activities.GameActivity;
 import com.wowloltech.politicalsandbox.activities.GameView;
 import com.wowloltech.politicalsandbox.activities.MainActivity;
+import com.wowloltech.politicalsandbox.models.AIPlayer;
 import com.wowloltech.politicalsandbox.models.Army;
+import com.wowloltech.politicalsandbox.models.HumanPlayer;
 import com.wowloltech.politicalsandbox.models.Map;
 import com.wowloltech.politicalsandbox.models.Player;
 import com.wowloltech.politicalsandbox.models.Province;
@@ -20,14 +25,21 @@ public class Game {
     private final String LOG_TAG = "myLog";
     private Player currentPlayer;
     private GameActivity activity;
+    private EditorActivity editorActivity;
     private int turnCounter = 0;
     private List<Player> players;
     private DatabaseHelper dbHelper;
     private GameView gameView;
+    private EditorView editorView;
     private int idCounter = 0;
 
     public Game(GameActivity activity) {
         this.activity = activity;
+        this.players = new LinkedList<>();
+    }
+
+    public Game(EditorActivity activity) {
+        editorActivity = activity;
         this.players = new LinkedList<>();
     }
 
@@ -53,11 +65,6 @@ public class Game {
 
     public void setCurrentPlayer(Player currentPlayer) {
         this.currentPlayer = currentPlayer;
-        if (currentPlayer != null) {
-            ContentValues cv = new ContentValues();
-            cv.put("current_player", currentPlayer.getId());
-            dbHelper.getDb().update("game", cv, null, null);
-        }
     }
 
     public int getTurnCounter() {
@@ -110,6 +117,12 @@ public class Game {
         }
     }
 
+    public void editMap(String saveName) {
+        dbHelper = new DatabaseHelper(editorActivity, "raw_map", saveName);
+        dbHelper.readDatabase(this);
+    }
+
+
     public void startGame(String dbName, String saveName) {
         Log.d("myLog", "startGame");
         if (MainActivity.rewrite) {
@@ -142,6 +155,19 @@ public class Game {
             }
     }
 
+    public Player addPlayer(int id, double money, int recruits, int color, String name) {
+        ContentValues cv = new ContentValues();
+        cv.put("money", money);
+        cv.put("recruits", recruits);
+        cv.put("color", color);
+        cv.put("name", name);
+        Log.d("myLog",  dbHelper.getDatabaseName());
+        dbHelper.getDb().insert("players", null, cv);
+        Player player = new Player(id, money, recruits, color, name, this);
+        players.add(player);
+        return player;
+    }
+
     public void removeArmy(Army army) {
         army.getOwner().getArmies().remove(army);
         army.getLocation().getArmies().remove(army);
@@ -168,10 +194,10 @@ public class Game {
                         a.getOwner().getArmies().remove(a);
                     }
                 }
-                province.getOwner().getProvinces().remove(province);
-                army.getOwner().getProvinces().add(province);
-                province.setOwner(army.getOwner());
             }
+            province.getOwner().getProvinces().remove(province);
+            army.getOwner().getProvinces().add(province);
+            province.setOwner(army.getOwner());
             gameView.invalidate();
             try {
                 Thread.sleep(15);
@@ -194,13 +220,13 @@ public class Game {
     public void updatePlayerDb(int id, String key, String value) {
         ContentValues cv = new ContentValues();
         cv.put(key, value);
-        dbHelper.getDb().update("players", cv, "_id = ?", new String[]{String.valueOf(id+1)});
+        dbHelper.getDb().update("players", cv, "_id = ?", new String[]{String.valueOf(id + 1)});
     }
 
     public void updateMapDb(int id, String key, String value) {
         ContentValues cv = new ContentValues();
         cv.put(key, value);
-        dbHelper.getDb().update("map", cv, "_id = ?", new String[]{String.valueOf(id+1)});
+        dbHelper.getDb().update("map", cv, "_id = ?", new String[]{String.valueOf(id + 1)});
     }
 
     public void addArmyToDb(Army a) {
@@ -249,5 +275,9 @@ public class Game {
         ContentValues cv = new ContentValues();
         cv.put("id_counter", idCounter);
         dbHelper.getDb().update("game", cv, null, null);
+    }
+
+    public void setEditorView(EditorView editorView) {
+        this.editorView = editorView;
     }
 }

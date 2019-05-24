@@ -33,6 +33,7 @@ public class LoadGameFragment extends Fragment implements View.OnClickListener {
         v.findViewById(R.id.loadgame_btn_cancel).setOnClickListener(this);
         v.findViewById(R.id.loadgame_btn_delete).setOnClickListener(this);
         v.findViewById(R.id.loadgame_btn_load).setOnClickListener(this);
+        v.findViewById(R.id.btn_editor).setOnClickListener(this);
         recyclerView = v.findViewById(R.id.recyclerView);
         saves = new ArrayList<>(Arrays.asList(getActivity().getApplicationContext().databaseList()));
         ListIterator<String>
@@ -82,6 +83,17 @@ public class LoadGameFragment extends Fragment implements View.OnClickListener {
                     saves.remove(pos);
                     adapter.notifyItemRemoved(pos);
                 }
+                break;
+            case R.id.btn_editor:
+                if (selectedSave != null)
+                    getActivity().getSharedPreferences("save", Activity.MODE_PRIVATE).edit().putString("save_database", selectedSave+".db").commit();
+                else {
+                    getActivity().getSharedPreferences("save", Activity.MODE_PRIVATE).edit().putString("save_database", "raw_map").commit();
+                }
+                    getActivity().getSharedPreferences("save", Activity.MODE_PRIVATE).edit().putString("new_or_load", "load").apply();
+                    isStarting = false;
+                    selectedSave = null;
+                    startActivity(new Intent(getActivity().getApplicationContext(), EditorActivity.class));
                 break;
         }
     }

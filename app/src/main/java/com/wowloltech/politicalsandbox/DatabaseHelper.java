@@ -5,23 +5,27 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Environment;
 import android.util.Log;
 
+import com.wowloltech.politicalsandbox.activities.EditorActivity;
 import com.wowloltech.politicalsandbox.models.Army;
 import com.wowloltech.politicalsandbox.models.Map;
 import com.wowloltech.politicalsandbox.models.Player;
 import com.wowloltech.politicalsandbox.models.Province;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.channels.FileChannel;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private String MAP_NAME = "testmap.db";
     private String SAVE_NAME = "testsave.db";
-    private static String DB_PATH = "";
+    public static String DB_PATH = "";
     private static final int DB_VERSION = 1;
     private static final String LOG_TAG = "polsandbox";
 
@@ -72,6 +76,39 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    public void exportDatabase(String databaseName, String newSaveName) {
+        try {
+            getDb().close();
+            File sd = Environment.getExternalStorageDirectory();
+            String data = mContext.getApplicationInfo().dataDir + "/databases/";
+
+            if (sd.canWrite()) {
+                File currentDB = new File(data + databaseName);
+                File backupDB = new File(sd, newSaveName);
+                File newDb = null;
+                if (!(data + databaseName).equals(data + newSaveName))
+                     newDb = new File(data + newSaveName);
+
+                if (currentDB.exists()) {
+                    FileChannel src = new FileInputStream(currentDB).getChannel();
+                    FileChannel dst = new FileOutputStream(backupDB).getChannel();
+                    dst.transferFrom(src, 0, src.size());
+                    src.close();
+                    dst.close();
+                    if (newDb != null) {
+                        src = new FileInputStream(currentDB).getChannel();
+                        dst = new FileOutputStream(newDb).getChannel();
+                        dst.transferFrom(src, 0, src.size());
+                        src.close();
+                        dst.close();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private void copyDBFile() throws IOException {
         InputStream mInput = mContext.getAssets().open(MAP_NAME);
         //InputStream mInput = mContext.getResources().openRawResource(R.raw.info);
@@ -113,20 +150,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Log.d(LOG_TAG, mDataBase.toString());
         Cursor c;
         c = mDataBase.query("game", null, null, null, null, null, null);
-        c.moveToFirst();
-        int widthColIndex = c.getColumnIndex("map_width");
-        int heightColIndex = c.getColumnIndex("map_height");
-        int idCounterColIndex = c.getColumnIndex("id_counter");
-        int turnCounterColIndex = c.getColumnIndex("turn_counter");
+        if (c.moveToFirst()) {
+            int widthColIndex = c.getColumnIndex("map_width");
+            int heightColIndex = c.getColumnIndex("map_height");
+            int idCounterColIndex = c.getColumnIndex("id_counter");
+            int turnCounterColIndex = c.getColumnIndex("turn_counter");
 
 
-        game.setIdCounter(c.getInt(idCounterColIndex));
-        game.setTurnCounterFromDb(c.getInt(turnCounterColIndex));
-        Map.setWidth(c.getInt(widthColIndex));
-        Map.setHeight(c.getInt(heightColIndex));
-        Map.setProvinces(new Province[Map.getHeight()][Map.getWidth()]);
-        Log.d("myLog", "" + Map.getWidth() + " " + Map.getHeight() + " " + Map.getProvinces().length + " " + Map.getProvinces()[0].length);
-        c.close();
+            game.setIdCounter(c.getInt(idCounterColIndex));
+            game.setTurnCounterFromDb(c.getInt(turnCounterColIndex));
+            Map.setWidth(c.getInt(widthColIndex));
+            Map.setHeight(c.getInt(heightColIndex));
+            Map.setProvinces(new Province[Map.getHeight()][Map.getWidth()]);
+            Log.d("myLog", "" + Map.getWidth() + " " + Map.getHeight() + " " + Map.getProvinces().length + " " + Map.getProvinces()[0].length);
+            c.close();
+        }
         c = mDataBase.query("players", null, null, null, null, null, null);
 //        int player_id = game.getActivity().getSharedPreferences("save", Context.MODE_PRIVATE).getInt("player_id", -1);
         if (c.moveToFirst()) {
@@ -163,27 +201,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     int id = c.getInt(idColIndex) - 1;
                     double income = c.getInt(incomeColIndex);
                     int ownerID = c.getInt(ownerColIndex);
-
-                    Log.d(LOG_TAG, "_id = " + id + ", income = " + income + ", owner = " + ownerID);
                     Map.getProvinces()[id / Map.getWidth()][id % Map.getWidth()]
                             = new Province(id % Map.getWidth(), id / Map.getWidth(), id, (int) income * 30, income, game.findPlayerByID(ownerID), type, game);
                     game.findPlayerByID(ownerID).getProvinces().add(Map.getProvinces()[id / Map.getWidth()][id % Map.getWidth()]);
                 } else {
                     int id = c.getInt(idColIndex) - 1;
-                    Map.getProvinces()[id / Map.getWidth()][id % Map.getWidth()] = new Province(id % Map.getWidth(), id / Map.getWidth(), id);
+                    Map.getProvinces()[id / Map.getWidth()][id % Map.getWidth()] = new Province(id % Map.getWidth(), id / Map.getWidth(), id, game);
                 }
             } while (c.moveToNext());
+            for (int i = 0; i < Map.getProvinces().length; i++)
+                for (int j = 0; j < Map.getProvinces()[0].length; j++)
+                    if (Map.getProvinces()[i][j].getType() != Province.Type.VOID) {
+                        for (Province p : Map.getNeighbours(Map.getProvinces()[i][j]))
+                            Map.getProvinces()[i][j].getNeighbours().add(p);
+                    }
         }
         c.close();
-
-        Log.d("myLog", "" + Map.getWidth() + " " + Map.getHeight());
-        for (int i = 0; i < Map.getProvinces().length; i++)
-            for (int j = 0; j < Map.getProvinces()[0].length; j++)
-                if (Map.getProvinces()[i][j].getType() != Province.Type.VOID) {
-                    for (Province p : Map.getNeighbours(Map.getProvinces()[i][j]))
-                        Map.getProvinces()[i][j].getNeighbours().add(p);
-//                    Collections.shuffle(Map.getProvinces()[i][j].getNeighbours());
-                }
 
 
         c = mDataBase.query("armies", null, null, null, null, null, null);

@@ -12,7 +12,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_above="@id/loadgame_btn_delete"/>
+        android:layout_above="@id/edit_lin"/>
 
     <Button
         android:id="@+id/loadgame_btn_cancel"
@@ -22,13 +22,34 @@
         android:layout_marginStart="16dp"
         android:text="@string/btn_cancel" />
 
-    <Button
-        android:id="@+id/loadgame_btn_delete"
+    <LinearLayout
+        android:id="@+id/edit_lin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:text="@string/delete" />
+        android:layout_centerHorizontal="true">
+
+        <Button
+            android:id="@+id/loadgame_btn_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:text="@string/delete" />
+
+        <Button
+            android:id="@+id/btn_editor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_toEndOf="@id/loadgame_btn_delete"
+            android:text="@string/editor"/>
+    </LinearLayout>
+
+
+
 
     <Button
         android:id="@+id/loadgame_btn_load"

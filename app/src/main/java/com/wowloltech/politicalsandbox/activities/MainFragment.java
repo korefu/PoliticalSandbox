@@ -62,6 +62,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                         .addToBackStack(null)
                         .replace(R.id.main_frame, loadGameFragment)
                         .commit();
+                break;
         }
     }
 }

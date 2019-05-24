@@ -111,4 +111,12 @@
     <string name="name_of_new_save">Name of new save</string>
     <string name="delete">Удалить</string>
     <string name="start_new_game">Начать игру</string>
+    <string name="editor">Редактор</string>
+    <string name="pick_color">Pick color</string>
+    <string name="name">Name</string>
+    <string name="save_name">Save name</string>
+    <string name="pick_country">Pick Country</string>
+    <string name="copy">Copy</string>
+    <string name="copy_and_exit">Copy and exit</string>
+    <string name="new_player">New player</string>
 </resources>

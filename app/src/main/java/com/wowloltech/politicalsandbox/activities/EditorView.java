@@ -17,10 +17,15 @@ import com.wowloltech.politicalsandbox.models.Map;
 import com.wowloltech.politicalsandbox.models.Player;
 import com.wowloltech.politicalsandbox.models.Province;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
-@SuppressLint("ViewConstructor")
-public class GameView extends View {
+/**
+ * TODO: document your custom view class.
+ */
+public class EditorView extends View {
+    Game game;
     public Path provincePath;
     public float size = 100;
     List<Province> neighbours;
@@ -30,18 +35,13 @@ public class GameView extends View {
     StringBuilder name;
     private float sqrt3 = (float) Math.sqrt(3);
     private Province selectedProvince;
-    private GameActivity activity;
-    private Game game;
-    private int selectedY;
-    private boolean isArmyMoving = false;
-    private boolean longPress = false;
-    private Army movingArmy = null;
-
     private float mPosX;
     private float mPosY;
+    private EditorActivity activity;
+    int selectedX = 0;
+    int selectedY = 0;
 
     private float cX, cY;
-
 
     // Scaling objects
     private ScaleGestureDetector mScaleDetector;
@@ -51,12 +51,11 @@ public class GameView extends View {
     private float scalePointX;
     private float scalePointY;
 
-
-    public GameView(GameActivity activity, Game game) {
+    public EditorView(EditorActivity activity) {
         super(activity);
         this.activity = activity;
+        game = activity.getGame();
         name = new StringBuilder();
-        this.game = game;
         p = new Paint();
         pBlack = new Paint();
         pText = new Paint();
@@ -74,18 +73,9 @@ public class GameView extends View {
             setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         mScaleDetector = new ScaleGestureDetector(activity, new ScaleListener());
         gestureDetector = new GestureDetector(activity, new MyGestureListener());
-        game.setGameView(this);
+        game.setEditorView(this);
     }
 
-    private void createProvincePath(Path provincePath) {
-        provincePath.moveTo(0f, size * 0.5f);
-        provincePath.lineTo(size * sqrt3 * 0.5f, 0f);
-        provincePath.lineTo(size * sqrt3, size * 0.5f);
-        provincePath.lineTo(size * sqrt3, size * 1.5f);
-        provincePath.lineTo(size * sqrt3 * 0.5f, size * 2f);
-        provincePath.lineTo(0f, size * 1.5f);
-        provincePath.close();
-    }
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -100,19 +90,14 @@ public class GameView extends View {
         canvas.restore();
     }
 
-    @SuppressLint("ClickableViewAccessibility")
-    @Override
-    public boolean onTouchEvent(MotionEvent ev) {
-        // Let the ScaleGestureDetector inspect all events.
-        mScaleDetector.onTouchEvent(ev);
-        gestureDetector.onTouchEvent(ev);
-
-        final int action = ev.getAction();
-        if (action == MotionEvent.ACTION_DOWN) {
-            cX = (ev.getX() - scalePointX) / mScaleFactor - mPosX + scalePointX; // canvas X
-            cY = (ev.getY() - scalePointY) / mScaleFactor - mPosY + scalePointY; // canvas Y
-        }
-        return true;
+    private void createProvincePath(Path provincePath) {
+        provincePath.moveTo(0f, size * 0.5f);
+        provincePath.lineTo(size * sqrt3 * 0.5f, 0f);
+        provincePath.lineTo(size * sqrt3, size * 0.5f);
+        provincePath.lineTo(size * sqrt3, size * 1.5f);
+        provincePath.lineTo(size * sqrt3 * 0.5f, size * 2f);
+        provincePath.lineTo(0f, size * 1.5f);
+        provincePath.close();
     }
 
     private void drawPathByProvince(Canvas canvas, Province province) {
@@ -130,31 +115,25 @@ public class GameView extends View {
                 p.setColor(province.getOwner().getColor());
             else
                 p.setColor(province.getOwner().getColor() - 0x66000000);
-
-            if (province.getY() % 2 == 1) {
-                provincePath.offset(size * sqrt3 * province.getX() + size * sqrt3 * 0.5f, 1.5f * size * province.getY());
-                canvas.drawPath(provincePath, p);
-                if (mScaleFactor > 0.5f) {
-                    canvas.drawPath(provincePath, pBlack);
-                    canvas.drawText(name.toString(), size * sqrt3 * province.getX() + size * sqrt3, pText.getTextSize() / 2 + size + size * 1.5f * province.getY(), pText);
-                }
-            } else {
-                provincePath.offset(size * sqrt3 * province.getX(), size * 1.5f * province.getY());
-                canvas.drawPath(provincePath, p);
-                if (mScaleFactor > 0.5f) {
-                    canvas.drawPath(provincePath, pBlack);
-                    canvas.drawText(name.toString(), size * sqrt3 * province.getX() + size * sqrt3 * 0.5f, size + pText.getTextSize() / 2 + size * 1.5f * province.getY(), pText);
-                }
-            }
-
-            provincePath.offset(-size * sqrt3 * province.getX(), -size * 1.5f * province.getY());
-            if (province.getY() % 2 == 1) {
-                provincePath.offset(-size * sqrt3 * 0.5f, 0);
-            }
-            name.delete(0, name.length());
+        } else p.setColor(Color.WHITE);
+        if (province.getY() % 2 == 1) {
+            provincePath.offset(size * sqrt3 * province.getX() + size * sqrt3 * 0.5f, 1.5f * size * province.getY());
+            canvas.drawPath(provincePath, p);
+            canvas.drawPath(provincePath, pBlack);
+            canvas.drawText(name.toString(), size * sqrt3 * province.getX() + size * sqrt3, pText.getTextSize() / 2 + size + size * 1.5f * province.getY(), pText);
+        } else {
+            provincePath.offset(size * sqrt3 * province.getX(), size * 1.5f * province.getY());
+            canvas.drawPath(provincePath, p);
+            canvas.drawPath(provincePath, pBlack);
+            canvas.drawText(name.toString(), size * sqrt3 * province.getX() + size * sqrt3 * 0.5f, size + pText.getTextSize() / 2 + size * 1.5f * province.getY(), pText);
         }
-    }
 
+        provincePath.offset(-size * sqrt3 * province.getX(), -size * 1.5f * province.getY());
+        if (province.getY() % 2 == 1) {
+            provincePath.offset(-size * sqrt3 * 0.5f, 0);
+        }
+        name.delete(0, name.length());
+    }
 
     public Province findProvinceByTouch() {
         float tempY = (int) cY % (int) (size * 3);
@@ -175,7 +154,6 @@ public class GameView extends View {
                     selectedY = (int) Math.floor((cY - (size * 0.5 * tempX / halfWidth)) / (size * 1.5));
             }
         }
-        int selectedX;
         if (selectedY % 2 == 0)
             selectedX = (int) Math.floor(cX / (int) (sqrt3 * size));
         else
@@ -187,25 +165,19 @@ public class GameView extends View {
         return null;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
+    @Override
+    public boolean onTouchEvent(MotionEvent ev) {
+        // Let the ScaleGestureDetector inspect all events.
+        mScaleDetector.onTouchEvent(ev);
+        gestureDetector.onTouchEvent(ev);
 
-    public Army getMovingArmy() {
-        return movingArmy;
-    }
-
-    public void setMovingArmy(Army movingArmy) {
-        this.movingArmy = movingArmy;
-    }
-
-    public void setIsArmyMoving(boolean armyMoving) {
-        this.isArmyMoving = armyMoving;
-    }
-
-    public boolean isArmyNotMoving() {
-        return !isArmyMoving;
-    }
-
-    public Province getSelectedProvince() {
-        return selectedProvince;
+        final int action = ev.getAction();
+        if (action == MotionEvent.ACTION_DOWN) {
+            cX = (ev.getX() - scalePointX) / mScaleFactor - mPosX + scalePointX; // canvas X
+            cY = (ev.getY() - scalePointY) / mScaleFactor - mPosY + scalePointY; // canvas Y
+        }
+        return true;
     }
 
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
@@ -241,14 +213,7 @@ public class GameView extends View {
         public void onLongPress(MotionEvent e) {
             super.onLongPress(e);
             Province province = findProvinceByTouch();
-            if (province != null && province.getType() != Province.Type.VOID && province.getOwner() == game.getCurrentPlayer()
-                    && !isArmyMoving && province.getArmies().size() > 0 && selectedProvince != null && !activity.AITurn) {
-                selectedProvince = province;
-                province.getOwner().uniteArmy(province);
-                activity.movingArmy(province.getArmies().get(0));
-                longPress = true;
-                invalidate();
-            }
+
             invalidate();
         }
 
@@ -256,36 +221,34 @@ public class GameView extends View {
         public boolean onSingleTapUp(MotionEvent e) {
             //    Toast.makeText(activity, "onTouch " + e.getX() + " " + e.getY(), Toast.LENGTH_SHORT).show();
             Province province = findProvinceByTouch();
-            if (province != null && province.getType() != Province.Type.VOID && !activity.AITurn) {
-                selectedProvince = province;
-//                Log.d("myLog", selectedProvince.getNeighbours().toString());
-                if (activity.newGame) {
-                    activity.getSharedPreferences("save", Context.MODE_PRIVATE).edit().putInt("player_id", province.getOwner().getId()).apply();
-                    activity.currentTurn(province.getOwner());
-                    activity.button.setEnabled(true);
-                    invalidate();
-                    return true;
-                }
-                if (isArmyNotMoving())
-                    activity.openContextMenu(activity.map);
-                else if (selectedProvince.getSelected()) {
-                    boolean isEnemy = movingArmy.getOwner() == selectedProvince.getOwner();
-                    game.attackProvince(movingArmy, selectedProvince);
-                    if (!longPress || isEnemy)
-                        movingArmy.getOwner().moveArmy(movingArmy, selectedProvince);
-                    else {
-                        longPress = false;
-                        movingArmy.setSpeed(movingArmy.getSpeed() + 1);
-                    }
-                    activity.movingArmy(movingArmy);
+            if (province == null) return false;
+            if (province.getType() == Province.Type.VOID) {
+                province.setArmies(new LinkedList<Army>());
+                province.setType(Province.Type.PLAIN);
+                province.setGame(game);
+                Player owner = game.findPlayerByID(Integer.valueOf(activity.idTextView.getText().toString()));
+                province.setOwner(owner);
+                province.setIncome(2);
+                province.setRecruits(60);
+
+            } else if (activity.selectedId != province.getOwner().getId()) {
+                if (activity.countryPicking) {
+                    activity.selectedId = province.getOwner().getId();
+                    activity.changePlayer();
+                    activity.countryPicking = false;
                 } else {
-                    movingArmy.setSpeed(2);
-                    activity.movingArmy(movingArmy);
+                    for (Army a : province.getArmies())
+                        game.removeArmy(a);
+                    province.setOwner(game.findPlayerByID(activity.selectedId));
                 }
-                invalidate();
+            } else {
+                province.setType(Province.Type.VOID);
             }
+
+
             invalidate();
             return true;
         }
     }
+
 }

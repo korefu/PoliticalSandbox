@@ -38,9 +38,12 @@ public class Tools {
                 while ((len = in.read(buf)) > 0) {
                     out.write(buf, 0, len);
                 }
+                out.flush();
             }
         }
     }
+
+
 
     private static View getViewByTag(ViewGroup root, String tag) {
         final int childCount = root.getChildCount();
