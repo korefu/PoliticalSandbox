@@ -119,4 +119,5 @@
     <string name="copy">Copy</string>
     <string name="copy_and_exit">Copy and exit</string>
     <string name="new_player">New player</string>
+    <string name="new_edit_save">New edit save</string>
 </resources>

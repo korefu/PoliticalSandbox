@@ -102,7 +102,7 @@ public class LoadGameFragment extends Fragment implements View.OnClickListener {
                     if (selectedSave != null)
                         getActivity().getSharedPreferences("save", Activity.MODE_PRIVATE).edit().putString("save_database", selectedSave + ".db").commit();
                     else {
-                        getActivity().getSharedPreferences("save", Activity.MODE_PRIVATE).edit().putString("save_database", "raw_map").commit();
+                        getActivity().getSharedPreferences("save", Activity.MODE_PRIVATE).edit().putString("save_database", "Temp edit save.db").commit();
                     }
                     getActivity().getSharedPreferences("save", Activity.MODE_PRIVATE).edit().putString("new_or_load", "load").apply();
                     isStarting = false;

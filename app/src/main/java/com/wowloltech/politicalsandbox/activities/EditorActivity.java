@@ -1,7 +1,9 @@
 package com.wowloltech.politicalsandbox.activities;
 
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.support.annotation.ColorInt;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -99,16 +101,28 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
                 break;
             case  R.id.btn_copy_save:
                 game.getDbHelper().exportDatabase(game.getDbHelper().getDatabaseName(), saveNameEditText.getText().toString()+".db");
-                onBackPressed();
+                finish();
         }
     }
 
     @Override
-    protected void onDestroy() {
-        try {
-            deleteDatabase("raw_map");
-        } catch (Exception ignored) {}
-        super.onDestroy();
+    public void onBackPressed() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Вы точно хотите выйти?")
+                .setCancelable(false)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        finish();
+                    }
+                })
+                .setNegativeButton(R.string.btn_cancel,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
     public void changePlayer() {
