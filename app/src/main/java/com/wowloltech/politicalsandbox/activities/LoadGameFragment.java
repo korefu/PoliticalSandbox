@@ -44,7 +44,8 @@ public class LoadGameFragment extends Fragment implements View.OnClickListener {
         recyclerView = v.findViewById(R.id.recyclerView);
         saves = new ArrayList<>(Arrays.asList(getActivity().getApplicationContext().databaseList()));
         File[] externalSaves = new File(Environment.getExternalStorageDirectory().toString() + "/Political Sandbox saves").listFiles();
-        for (File externalSave : externalSaves) saves.add(externalSave.getName());
+        if (externalSaves != null)
+            for (File externalSave : externalSaves) saves.add(externalSave.getName());
         ListIterator<String>
                 iterator = saves.listIterator();
         while (iterator.hasNext()) {
