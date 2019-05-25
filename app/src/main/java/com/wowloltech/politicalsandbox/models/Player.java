@@ -1,8 +1,6 @@
 package com.wowloltech.politicalsandbox.models;
 
-import android.content.ContentValues;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.wowloltech.politicalsandbox.Game;
 
@@ -77,7 +75,7 @@ public class Player {
 
     public void setName(String name) {
         this.name = name;
-        game.updatePlayerDb(getId(),"name", name);
+        game.updatePlayerDb(getId(), "name", name);
     }
 
     public void setColor(int color) {
@@ -129,7 +127,7 @@ public class Player {
     }
 
     public void pickMilitary(int strength, Province province) {
-        Log.d("myLog", ""+getName()+" "+strength);
+//        Log.d("myLog", ""+getName()+" "+strength);
         Army army = new Army(strength, province, this, game.getIdCounter(), game);
         addArmy(army);
         game.setIdCounter(game.getIdCounter() + 1);

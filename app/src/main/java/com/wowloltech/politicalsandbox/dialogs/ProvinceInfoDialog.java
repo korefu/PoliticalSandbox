@@ -10,10 +10,10 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.TextView;
 
+import com.wowloltech.politicalsandbox.R;
 import com.wowloltech.politicalsandbox.activities.GameActivity;
 import com.wowloltech.politicalsandbox.models.Army;
 import com.wowloltech.politicalsandbox.models.Player;
-import com.wowloltech.politicalsandbox.R;
 
 import java.util.Objects;
 

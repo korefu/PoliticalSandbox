@@ -17,7 +17,6 @@ import com.wowloltech.politicalsandbox.models.Map;
 import com.wowloltech.politicalsandbox.models.Player;
 import com.wowloltech.politicalsandbox.models.Province;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 

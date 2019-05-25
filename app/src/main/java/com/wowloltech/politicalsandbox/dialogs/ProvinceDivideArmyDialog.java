@@ -14,9 +14,9 @@ import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.wowloltech.politicalsandbox.R;
 import com.wowloltech.politicalsandbox.activities.GameActivity;
 import com.wowloltech.politicalsandbox.models.Army;
-import com.wowloltech.politicalsandbox.R;
 
 import java.util.Objects;
 

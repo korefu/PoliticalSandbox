@@ -2,27 +2,21 @@ package com.wowloltech.politicalsandbox.activities;
 
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.pes.androidmaterialcolorpickerdialog.ColorPicker;
 import com.pes.androidmaterialcolorpickerdialog.ColorPickerCallback;
-import com.wowloltech.politicalsandbox.DatabaseHelper;
 import com.wowloltech.politicalsandbox.Game;
 import com.wowloltech.politicalsandbox.R;
-import com.wowloltech.politicalsandbox.Tools;
 import com.wowloltech.politicalsandbox.models.Player;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Random;
 
 public class EditorActivity extends AppCompatActivity implements View.OnClickListener {

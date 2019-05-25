@@ -8,7 +8,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Environment;
 import android.util.Log;
 
-import com.wowloltech.politicalsandbox.activities.EditorActivity;
 import com.wowloltech.politicalsandbox.models.Army;
 import com.wowloltech.politicalsandbox.models.Map;
 import com.wowloltech.politicalsandbox.models.Player;
@@ -83,8 +82,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             String data = mContext.getApplicationInfo().dataDir + "/databases/";
 
             if (sd.canWrite()) {
+                File dir = new File(sd.getPath() + "/Political Sandbox saves");
+                dir.mkdir();
                 File currentDB = new File(data + databaseName);
-                File backupDB = new File(sd, newSaveName);
+                File backupDB = new File(dir, newSaveName);
                 File newDb = null;
                 if (!(data + databaseName).equals(data + newSaveName))
                     newDb = new File(data + newSaveName);
@@ -98,13 +99,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         dst.transferFrom(src, 0, src.size());
                         src.close();
                         dst.close();
-                    }
-                    if (newDb != null) {
-                        src = new FileInputStream(currentDB).getChannel();
-                        dst = new FileOutputStream(newDb).getChannel();
-                        dst.transferFrom(src, 0, src.size());
-                        src.close();
-                        dst.close();
+                    } else {
+                        if (newDb != null) {
+                            src = new FileInputStream(currentDB).getChannel();
+                            dst = new FileOutputStream(newDb).getChannel();
+                            dst.transferFrom(src, 0, src.size());
+                            src.close();
+                            dst.close();
+                        }
                     }
                 }
             }
@@ -166,7 +168,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             Map.setWidth(c.getInt(widthColIndex));
             Map.setHeight(c.getInt(heightColIndex));
             Map.setProvinces(new Province[Map.getHeight()][Map.getWidth()]);
-            Log.d("myLog", "" + Map.getWidth() + " " + Map.getHeight() + " " + Map.getProvinces().length + " " + Map.getProvinces()[0].length);
+//            Log.d("myLog", "" + Map.getWidth() + " " + Map.getHeight() + " " + Map.getProvinces().length + " " + Map.getProvinces()[0].length);
             c.close();
         }
         c = mDataBase.query("players", null, null, null, null, null, null);

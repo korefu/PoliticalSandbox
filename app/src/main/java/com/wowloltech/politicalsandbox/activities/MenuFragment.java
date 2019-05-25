@@ -9,10 +9,6 @@ import android.view.ViewGroup;
 
 import com.wowloltech.politicalsandbox.Game;
 import com.wowloltech.politicalsandbox.R;
-import com.wowloltech.politicalsandbox.Tools;
-
-import java.io.File;
-import java.io.IOException;
 
 public class MenuFragment extends Fragment implements View.OnClickListener {
     String LOG_TAG = "myLog";

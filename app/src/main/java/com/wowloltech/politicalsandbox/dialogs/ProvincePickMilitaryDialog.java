@@ -17,13 +17,14 @@ import android.widget.TextView;
 import com.wowloltech.politicalsandbox.activities.GameActivity;
 import com.wowloltech.politicalsandbox.R;
 
-public class ProvincePickMilitaryDialog extends DialogFragment implements OnClickListener, SeekBar.OnSeekBarChangeListener {
+public class ProvincePickMilitaryDialog extends DialogFragment implements OnClickListener, SeekBar.OnSeekBarChangeListener, DialogInterface.OnShowListener {
 
     final String LOG_TAG = "myLog";
     TextView recruitSelected;
-    SeekBar seekBar;
+    public SeekBar seekBar;
     GameActivity activity;
-    int selectedRecruits;
+    public int selectedRecruits = 0;
+    int lastCount = 0;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
@@ -34,8 +35,10 @@ public class ProvincePickMilitaryDialog extends DialogFragment implements OnClic
         seekBar = v.findViewById(R.id.menu_recruit_seekbar);
         seekBar.setOnSeekBarChangeListener(this);
         recruitSelected.setText("0");
+        getDialog().setOnShowListener(this);
         return v;
     }
+
 
     public void setActivity(GameActivity activity) {
         this.activity = activity;
@@ -69,9 +72,9 @@ public class ProvincePickMilitaryDialog extends DialogFragment implements OnClic
     @Override
     public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
         if (activity.getGame().getCurrentPlayer().getMoney() * 50 >= activity.getGame().getCurrentPlayer().getRecruits())
-            selectedRecruits = seekBar.getProgress() * activity.getGame().getCurrentPlayer().getRecruits() / 100;
+            selectedRecruits = seekBar.getProgress() * activity.getGame().getCurrentPlayer().getRecruits() / seekBar.getMax();
         else
-            selectedRecruits = (int) (seekBar.getProgress() * activity.getGame().getCurrentPlayer().getMoney() / 2);
+            selectedRecruits = (int) (seekBar.getProgress() * activity.getGame().getCurrentPlayer().getMoney() * 50 / seekBar.getMax());
         recruitSelected.setText(String.valueOf(selectedRecruits));
     }
 
@@ -84,5 +87,17 @@ public class ProvincePickMilitaryDialog extends DialogFragment implements OnClic
     public void onStopTrackingTouch(SeekBar seekBar) {
 
 
+    }
+
+    @Override
+    public void onShow(DialogInterface dialogInterface) {
+        int maxRecruits;
+        if (activity.getGame().getCurrentPlayer().getMoney() * 50 >= activity.getGame().getCurrentPlayer().getRecruits())
+            maxRecruits = activity.getGame().getCurrentPlayer().getRecruits();
+        else
+            maxRecruits = (int) (activity.getGame().getCurrentPlayer().getMoney() * 50);
+//        Log.d("myLog", maxRecruits+" "+selectedRecruits);
+        seekBar.setMax(maxRecruits);
+        seekBar.setProgress(selectedRecruits);
     }
 }

@@ -2,7 +2,6 @@ package com.wowloltech.politicalsandbox;
 
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.os.Looper;
 import android.util.Log;
 
@@ -11,9 +10,7 @@ import com.wowloltech.politicalsandbox.activities.EditorView;
 import com.wowloltech.politicalsandbox.activities.GameActivity;
 import com.wowloltech.politicalsandbox.activities.GameView;
 import com.wowloltech.politicalsandbox.activities.MainActivity;
-import com.wowloltech.politicalsandbox.models.AIPlayer;
 import com.wowloltech.politicalsandbox.models.Army;
-import com.wowloltech.politicalsandbox.models.HumanPlayer;
 import com.wowloltech.politicalsandbox.models.Map;
 import com.wowloltech.politicalsandbox.models.Player;
 import com.wowloltech.politicalsandbox.models.Province;

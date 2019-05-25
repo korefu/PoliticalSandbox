@@ -14,9 +14,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
+import com.wowloltech.politicalsandbox.R;
 import com.wowloltech.politicalsandbox.activities.GameActivity;
 import com.wowloltech.politicalsandbox.models.Army;
-import com.wowloltech.politicalsandbox.R;
 
 import java.util.LinkedList;
 import java.util.List;
