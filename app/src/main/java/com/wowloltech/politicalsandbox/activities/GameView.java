@@ -27,7 +27,6 @@ public class GameView extends View {
     Paint p;
     Paint pBlack;
     Paint pText;
-    StringBuilder name;
     private float sqrt3 = (float) Math.sqrt(3);
     private Province selectedProvince;
     private GameActivity activity;
@@ -55,14 +54,13 @@ public class GameView extends View {
     public GameView(GameActivity activity, Game game) {
         super(activity);
         this.activity = activity;
-        name = new StringBuilder();
         this.game = game;
         p = new Paint();
         pBlack = new Paint();
         pText = new Paint();
         pText.setColor(Color.BLACK);
         pText.setTextAlign(Paint.Align.CENTER);
-        pText.setTextSize(25f);
+        pText.setTextSize(30f);
         pBlack.setColor(Color.BLACK);
         pBlack.setStrokeWidth(2);
         pBlack.setStyle(Paint.Style.STROKE);
@@ -117,15 +115,6 @@ public class GameView extends View {
 
     private void drawPathByProvince(Canvas canvas, Province province) {
         if (province.getType() != Province.Type.VOID) {
-            name.append(province.getIncome()).append(' ');
-            try {
-                for (Player p : game.getPlayers())
-                    for (Army a : p.getArmies())
-                        if (a.getLocation().getId() == province.getId())
-                            name.append(a.getStrength()).append(' ');
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
             if (!province.getSelected())
                 p.setColor(province.getOwner().getColor());
             else
@@ -136,14 +125,16 @@ public class GameView extends View {
                 canvas.drawPath(provincePath, p);
                 if (mScaleFactor > 0.5f) {
                     canvas.drawPath(provincePath, pBlack);
-                    canvas.drawText(name.toString(), size * sqrt3 * province.getX() + size * sqrt3, pText.getTextSize() / 2 + size + size * 1.5f * province.getY(), pText);
+                    for (int i = 0; i < province.getArmies().size(); i++)
+                        canvas.drawText(String.valueOf(province.getArmies().get(i).getStrength()), size * sqrt3 * province.getX() + size * sqrt3, pText.getTextSize() * (i+1 - (float) province.getArmies().size() / 2) + size + size * 1.5f * province.getY(), pText);
                 }
             } else {
                 provincePath.offset(size * sqrt3 * province.getX(), size * 1.5f * province.getY());
                 canvas.drawPath(provincePath, p);
                 if (mScaleFactor > 0.5f) {
                     canvas.drawPath(provincePath, pBlack);
-                    canvas.drawText(name.toString(), size * sqrt3 * province.getX() + size * sqrt3 * 0.5f, size + pText.getTextSize() / 2 + size * 1.5f * province.getY(), pText);
+                    for (int i = 0; i < province.getArmies().size(); i++)
+                        canvas.drawText(String.valueOf(province.getArmies().get(i).getStrength()), size * sqrt3 * province.getX() + size * sqrt3 * 0.5f, size + pText.getTextSize() * (i+1 - (float) province.getArmies().size() / 2) + size * 1.5f * province.getY(), pText);
                 }
             }
 
@@ -151,7 +142,6 @@ public class GameView extends View {
             if (province.getY() % 2 == 1) {
                 provincePath.offset(-size * sqrt3 * 0.5f, 0);
             }
-            name.delete(0, name.length());
         }
     }
 
