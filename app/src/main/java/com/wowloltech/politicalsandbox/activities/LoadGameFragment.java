@@ -43,7 +43,7 @@ public class LoadGameFragment extends Fragment implements View.OnClickListener {
         v.findViewById(R.id.btn_editor).setOnClickListener(this);
         recyclerView = v.findViewById(R.id.recyclerView);
         saves = new ArrayList<>(Arrays.asList(getActivity().getApplicationContext().databaseList()));
-        File[] externalSaves = new File(Environment.getExternalStorageDirectory().toString()+"/Political Sandbox saves").listFiles();
+        File[] externalSaves = new File(Environment.getExternalStorageDirectory().toString() + "/Political Sandbox saves").listFiles();
         for (File externalSave : externalSaves) saves.add(externalSave.getName());
         ListIterator<String>
                 iterator = saves.listIterator();
@@ -91,7 +91,7 @@ public class LoadGameFragment extends Fragment implements View.OnClickListener {
             case R.id.loadgame_btn_delete:
                 if (selectedSave != null) {
                     getActivity().deleteDatabase(selectedSave + ".db");
-                    File f = new File(Environment.getExternalStorageDirectory().toString()+"/Political Sandbox saves/"+selectedSave+".db");
+                    File f = new File(Environment.getExternalStorageDirectory().toString() + "/Political Sandbox saves/" + selectedSave + ".db");
 //                    Log.d("myLog", f.getPath());
                     if (f.exists()) {
                         try {
@@ -107,22 +107,15 @@ public class LoadGameFragment extends Fragment implements View.OnClickListener {
                 }
                 break;
             case R.id.btn_editor:
-                if (ContextCompat.checkSelfPermission(getActivity(),
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-                    }
+                if (selectedSave != null)
+                    getActivity().getSharedPreferences("save", Activity.MODE_PRIVATE).edit().putString("save_database", selectedSave + ".db").commit();
                 else {
-                    if (selectedSave != null)
-                        getActivity().getSharedPreferences("save", Activity.MODE_PRIVATE).edit().putString("save_database", selectedSave + ".db").commit();
-                    else {
-                        getActivity().getSharedPreferences("save", Activity.MODE_PRIVATE).edit().putString("save_database", "Temp edit save.db").commit();
-                    }
-                    getActivity().getSharedPreferences("save", Activity.MODE_PRIVATE).edit().putString("new_or_load", "load").apply();
-                    isStarting = false;
-                    selectedSave = null;
-                    startActivity(new Intent(getActivity().getApplicationContext(), EditorActivity.class));
+                    getActivity().getSharedPreferences("save", Activity.MODE_PRIVATE).edit().putString("save_database", "Temp edit save.db").commit();
                 }
+                getActivity().getSharedPreferences("save", Activity.MODE_PRIVATE).edit().putString("new_or_load", "load").apply();
+                isStarting = false;
+                selectedSave = null;
+                startActivity(new Intent(getActivity().getApplicationContext(), EditorActivity.class));
                 break;
         }
     }

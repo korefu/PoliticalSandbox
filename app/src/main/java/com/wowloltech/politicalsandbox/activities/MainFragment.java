@@ -1,9 +1,13 @@
 package com.wowloltech.politicalsandbox.activities;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,10 +62,16 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 }
                 break;
             case R.id.btn_load_game:
-                getFragmentManager().beginTransaction()
-                        .addToBackStack(null)
-                        .replace(R.id.main_frame, loadGameFragment)
-                        .commit();
+                if (ContextCompat.checkSelfPermission(getActivity(),
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                } else {
+                    getFragmentManager().beginTransaction()
+                            .addToBackStack(null)
+                            .replace(R.id.main_frame, loadGameFragment)
+                            .commit();
+                }
                 break;
         }
     }
