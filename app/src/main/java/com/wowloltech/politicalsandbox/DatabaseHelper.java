@@ -99,14 +99,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         dst.transferFrom(src, 0, src.size());
                         src.close();
                         dst.close();
-                    } else {
-                        if (newDb != null) {
-                            src = new FileInputStream(currentDB).getChannel();
-                            dst = new FileOutputStream(newDb).getChannel();
-                            dst.transferFrom(src, 0, src.size());
-                            src.close();
-                            dst.close();
-                        }
+                    }
+                    if (newDb != null) {
+                        src = new FileInputStream(currentDB).getChannel();
+                        dst = new FileOutputStream(newDb).getChannel();
+                        dst.transferFrom(src, 0, src.size());
+                        src.close();
+                        dst.close();
                     }
                 }
             }
