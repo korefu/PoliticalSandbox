@@ -24,6 +24,7 @@ public class ProvincePickMilitaryDialog extends DialogFragment implements OnClic
     public SeekBar seekBar;
     GameActivity activity;
     public int selectedRecruits = 0;
+    private int savedNumber = 0;
     int lastCount = 0;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -48,8 +49,9 @@ public class ProvincePickMilitaryDialog extends DialogFragment implements OnClic
         Log.d(LOG_TAG, "ProvinceRecruitDialog: " + ((Button) v).getText());
         switch (v.getId()) {
             case R.id.btn_ok:
-                if (seekBar.getProgress() * activity.getGame().getCurrentPlayer().getRecruits() / 100 > 0) {
+                if (seekBar.getProgress() * activity.getGame().getCurrentPlayer().getRecruits() / seekBar.getMax() > 0) {
                     activity.getGame().getCurrentPlayer().pickMilitary(selectedRecruits, activity.gameView.getSelectedProvince());
+                    savedNumber = selectedRecruits;
                 }
                 break;
             case R.id.btn_cancel:
@@ -96,8 +98,7 @@ public class ProvincePickMilitaryDialog extends DialogFragment implements OnClic
             maxRecruits = activity.getGame().getCurrentPlayer().getRecruits();
         else
             maxRecruits = (int) (activity.getGame().getCurrentPlayer().getMoney() * 50);
-//        Log.d("myLog", maxRecruits+" "+selectedRecruits);
         seekBar.setMax(maxRecruits);
-        seekBar.setProgress(selectedRecruits);
+        seekBar.setProgress(savedNumber);
     }
 }
