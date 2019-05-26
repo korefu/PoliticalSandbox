@@ -183,12 +183,10 @@ public class Game {
                     } else if (a.getStrength() == army.getStrength()) {
                         removeArmy(army);
                         removeArmy(a);
-                        a.getOwner().getArmies().remove(a);
                         return;
                     } else {
                         army.setStrength(army.getStrength() - a.getStrength());
                         removeArmy(a);
-                        a.getOwner().getArmies().remove(a);
                     }
                 }
             }

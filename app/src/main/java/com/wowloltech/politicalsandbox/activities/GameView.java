@@ -261,7 +261,7 @@ public class GameView extends View {
                 else if (selectedProvince.getSelected()) {
                     boolean isEnemy = movingArmy.getOwner() == selectedProvince.getOwner();
                     game.attackProvince(movingArmy, selectedProvince);
-                    if (!longPress || isEnemy)
+                    if ((!longPress || isEnemy) && movingArmy.getOwner().getArmies().contains(movingArmy))
                         movingArmy.getOwner().moveArmy(movingArmy, selectedProvince);
                     else {
                         longPress = false;
